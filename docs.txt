@@ -1,0 +1,4 @@
+npm run migration:generate -> tạo migration
+npm run migration:run -> thực thi migration
+
+npm run seed -> chạy dữ liệu mẫu vào database
