@@ -1,3 +1,5 @@
+npm install -> cài đặt package
+
 npm run migration:generate -> tạo migration
 npm run migration:run -> thực thi migration
 
