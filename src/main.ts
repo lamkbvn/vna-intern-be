@@ -6,3 +6,5 @@ async function bootstrap() {
   await app.listen(process.env.PORT ?? 3000);
 }
 await bootstrap();
+
+//http://localhost:3000
