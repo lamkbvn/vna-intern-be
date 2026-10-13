@@ -89,4 +89,38 @@ export class UsersService {
         });
     }
 
+    async findByEmailWithResetOtp(email: string) {
+        return this.userRepository.findOne({
+            where: { email },
+            select: [
+                'id',
+                'email',
+                'username',
+                'resetPasswordOtpHash',
+                'resetPasswordOtpExpiresAt',
+            ],
+        });
+    }
+
+    async updateResetPasswordOtp(
+        userId: string,
+        resetPasswordOtpHash: string | null,
+        resetPasswordOtpExpiresAt: Date | null,
+    ) {
+        return this.userRepository.update(userId, {
+            resetPasswordOtpHash,
+            resetPasswordOtpExpiresAt,
+        });
+    }
+
+    async updatePassword(userId: string, newPasswordHash: string) {
+        return this.userRepository.update(userId, {
+            passwordHash: newPasswordHash,
+            resetPasswordOtpHash: null,
+            resetPasswordOtpExpiresAt: null,
+            refreshTokenHash: null,
+            refreshTokenExpiresAt: null,
+        });
+    }
+
 }
