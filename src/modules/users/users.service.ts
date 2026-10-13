@@ -11,6 +11,24 @@ export class UsersService {
         private readonly userRepository: Repository<User>,
     ) { }
 
+
+    async findProfileById(id: string) {
+        return this.userRepository.findOne({
+            where: { id },
+            select: {
+                id: true,
+                username: true,
+                email: true,
+                fullName: true,
+                gender: true,
+                dateOfBirth: true,
+                createdAt: true,
+                updatedAt: true,
+            },
+        });
+    }
+
+
     findAll(): Promise<User[]> {
         return this.userRepository.find();
     }
@@ -58,11 +76,11 @@ export class UsersService {
     }
 
     async updateRefreshTokenData(userId: string, refreshTokenHash: string | null, refreshTokenExpiresAt: Date | null) {
-  return this.userRepository.update(userId, {
-    refreshTokenHash,
-    refreshTokenExpiresAt,
-  });
-}
+        return this.userRepository.update(userId, {
+            refreshTokenHash,
+            refreshTokenExpiresAt,
+        });
+    }
 
     async findByIdWithRefreshToken(id: string) {
         return this.userRepository.findOne({

@@ -157,4 +157,26 @@ export class AuthService {
     await this.usersService.updateRefreshTokenData(userId, null, null);
     return Response.get({ message: 'Đăng xuất thành công' });
   }
+
+
+  
+async getProfile(userId: string) {
+  const user = await this.usersService.findProfileById(userId);
+
+  if (!user) {
+    throw Response.errorNotFound(Response.NOT_FOUND('User'));
+  }
+
+  return Response.get({
+    id: user.id,
+    username: user.username,
+    email: user.email,
+    fullName: user.fullName,
+    gender: user.gender,
+    dateOfBirth: user.dateOfBirth,
+    createdAt: user.createdAt,
+    updatedAt: user.updatedAt,
+  });
+}
+
 }
