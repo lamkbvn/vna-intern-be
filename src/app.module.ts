@@ -5,6 +5,9 @@ import { AppController } from './app.controller.js';
 import { AppService } from './app.service.js';
 import { UsersModule } from './modules/users/users.module.js';
 import { AuthModule } from './modules/auth/auth.module.js';
+import { LocationModule } from './modules/location/location.module.js';
+import { CategoryController } from './modules/category/category.controller.js';
+import { CategoryService } from './modules/category/category.service.js';
 
 @Module({
   imports: [
@@ -27,8 +30,9 @@ import { AuthModule } from './modules/auth/auth.module.js';
     }),
     UsersModule,
     AuthModule,
+    LocationModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [AppController, CategoryController],
+  providers: [AppService, CategoryService],
 })
 export class AppModule {}

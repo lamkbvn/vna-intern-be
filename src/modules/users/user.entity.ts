@@ -54,6 +54,39 @@ export class User {
   })
   resetPasswordOtpExpiresAt: Date | null;
 
+
+  @Column({
+    name: 'change_email_otp_hash',
+    type: 'varchar',
+    length: 255,
+    nullable: true,
+    select: false,
+  })
+  changeEmailOtpHash: string | null;
+
+  @Column({
+    name: 'change_email_otp_expires_at',
+    type: 'timestamp',
+    nullable: true,
+  })
+  changeEmailOtpExpiresAt: Date | null;
+
+  @Column({
+  name: 'change_email_otp_verified',
+  type: 'boolean',
+  default: false,
+})
+changeEmailOtpVerified: boolean;
+
+  @Column({ type: 'varchar', nullable: true })
+  province: string | null;
+
+  @Column({ type: 'varchar', nullable: true })
+  district: string | null;
+
+  @Column({ type: 'text', nullable: true })
+  streetAddress: string | null;
+
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 

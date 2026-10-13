@@ -98,4 +98,29 @@ Nếu bạn không yêu cầu khôi phục mật khẩu, vui lòng bỏ qua emai
       }
     }
   }
+
+  async sendEmailChangeOtp(
+    to: string,
+    otp: string,
+  ): Promise<void> {
+    if (this.transporter)
+      try {
+        await this.transporter.sendMail({
+          from: this.configService.getOrThrow<string>('MAIL_FROM'),
+          to,
+          subject: 'Mã OTP xác nhận đổi email', 
+          text: [
+            `Mã xác nhận đổi email của bạn là: ${otp}`,
+            'Mã có hiệu lực trong 10 phút.',
+            'Nếu bạn không yêu cầu đổi email, hãy bỏ qua email này.',
+          ].join('\n'),
+        });
+        this.logger.log(`Đã gửi email OTP thực tế thành công tới: ${to}`);
+      } catch (error) {
+        this.logger.error(`Lỗi khi gửi email qua SMTP tới ${to}:`, error);
+      }
+  }
+
+
+
 }

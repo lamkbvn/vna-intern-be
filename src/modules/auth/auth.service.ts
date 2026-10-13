@@ -7,7 +7,7 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
-import ms from 'ms';
+import ms, { StringValue } from 'ms';
 
 import { UsersService } from '../users/users.service.js';
 import { MailService } from '../mail/mail.service.js';
@@ -95,66 +95,98 @@ export class AuthService {
     });
   }
 
-  // 1. Hàm làm mới Access Token khi hết hạn
-  async refreshTokens(userId: string, incomingRefreshToken: string) {
-    // Tìm user kèm theo trường refreshTokenHash và refreshTokenExpiresAt
-    const user = await this.usersService.findByIdWithRefreshToken(userId);
+ async refreshTokens(incomingRefreshToken: string) {
+  // 1. Xác minh chữ ký và thời hạn của refresh token
+  let payload: { sub: string; username: string };
 
-    if (!user || !user.refreshTokenHash || !user.refreshTokenExpiresAt) {
-      throw Response.errorUnauthorized(Response.EXPIRED_TOKEN);
-    }
-
-    // Kiểm tra xem Refresh Token trong DB đã hết hạn chưa
-    if (new Date() > new Date(user.refreshTokenExpiresAt)) {
-      throw Response.errorUnauthorized(Response.EXPIRED_TOKEN);
-    }
-
-    // So sánh refresh token gửi lên với hash trong database
-    const isRefreshTokenValid = await bcrypt.compare(
-      incomingRefreshToken,
-      user.refreshTokenHash,
-    );
-
-    if (!isRefreshTokenValid) {
-      throw Response.errorUnauthorized(Response.WRONG_TOKEN);
-    }
-
-    // Tạo payload mới
-    const payload = {
-      sub: user.id,
-      username: user.username,
-    };
-
-    // Tạo cặp token mới
-    const [accessToken, refreshToken] = await Promise.all([
-      this.jwtService.signAsync(payload, {
-        secret: this.configService.getOrThrow<string>('JWT_ACCESS_SECRET'),
-        expiresIn: this.configService.getOrThrow<any>('JWT_ACCESS_EXPIRES_IN'),
-      }),
-      this.jwtService.signAsync(payload, {
-        secret: this.configService.getOrThrow<string>('JWT_REFRESH_SECRET'),
-        expiresIn: this.configService.getOrThrow<any>('JWT_REFRESH_EXPIRES_IN'),
-      }),
-    ]);
-
-    // Tính hạn mới cho refresh token
-    const refreshExpiresInStr = this.configService.getOrThrow<string>('JWT_REFRESH_EXPIRES_IN');
-    const newRefreshTokenExpiresAt = new Date(Date.now() + ms(refreshExpiresInStr as any));
-    const newRefreshTokenHash = await bcrypt.hash(refreshToken, 10);
-
-    // Cập nhật lại hash mới và thời gian hết hạn mới vào DB
-    await this.usersService.updateRefreshTokenData(
-      user.id,
-      newRefreshTokenHash,
-      newRefreshTokenExpiresAt,
-    );
-
-    return Response.get({
-      accessToken,
-      refreshToken,
-      tokenType: 'Bearer'
+  try {
+    payload = await this.jwtService.verifyAsync(incomingRefreshToken, {
+      secret: this.configService.getOrThrow<string>(
+        'JWT_REFRESH_SECRET',
+      ),
     });
+  } catch {
+    throw Response.errorUnauthorized(Response.EXPIRED_TOKEN);
   }
+
+  if (!payload.sub || !payload.username) {
+    throw Response.errorUnauthorized(Response.WRONG_TOKEN);
+  }
+
+  // 2. Tìm user từ ID trong payload đã được xác minh
+  const user = await this.usersService.findByIdWithRefreshToken(
+    payload.sub,
+  );
+
+  if (!user || !user.refreshTokenHash || !user.refreshTokenExpiresAt) {
+    throw Response.errorUnauthorized(Response.EXPIRED_TOKEN);
+  }
+
+  // 3. Kiểm tra hạn refresh token trong database
+  if (new Date() >= new Date(user.refreshTokenExpiresAt)) {
+    throw Response.errorUnauthorized(Response.EXPIRED_TOKEN);
+  }
+
+  // 4. So sánh refresh token với hash trong database
+  const isRefreshTokenValid = await bcrypt.compare(
+    incomingRefreshToken,
+    user.refreshTokenHash,
+  );
+
+  if (!isRefreshTokenValid) {
+    throw Response.errorUnauthorized(Response.WRONG_TOKEN);
+  }
+
+  // 5. Tạo payload mới
+  const newPayload = {
+    sub: user.id,
+    username: user.username,
+  };
+
+  // 6. Tạo cặp token mới
+  const refreshExpiresInStr =
+    this.configService.getOrThrow<string>(
+      'JWT_REFRESH_EXPIRES_IN',
+    ) as StringValue;
+
+  const [accessToken, refreshToken] = await Promise.all([
+    this.jwtService.signAsync(newPayload, {
+      secret: this.configService.getOrThrow<string>(
+        'JWT_ACCESS_SECRET',
+      ),
+      expiresIn: this.configService.getOrThrow<string>(
+        'JWT_ACCESS_EXPIRES_IN',
+      ) as StringValue,
+    }),
+    this.jwtService.signAsync(newPayload, {
+      secret: this.configService.getOrThrow<string>(
+        'JWT_REFRESH_SECRET',
+      ),
+      expiresIn: refreshExpiresInStr,
+    }),
+  ]);
+
+  // 7. Tính thời hạn và hash của refresh token mới
+  const newRefreshTokenExpiresAt = new Date(
+    Date.now() + ms(refreshExpiresInStr),
+  );
+
+  const newRefreshTokenHash = await bcrypt.hash(refreshToken, 10);
+
+  // 8. Cập nhật refresh token trong database
+  await this.usersService.updateRefreshTokenData(
+    user.id,
+    newRefreshTokenHash,
+    newRefreshTokenExpiresAt,
+  );
+
+  // 9. Trả token về client
+  return Response.get({
+    accessToken,
+    refreshToken,
+    tokenType: 'Bearer',
+  });
+}
 
   // 2. Hàm Logout (Xóa sạch token data trong DB)
   async logout(userId: string) {
@@ -265,23 +297,6 @@ export class AuthService {
   }
 
   
-async getProfile(userId: string) {
-  const user = await this.usersService.findProfileById(userId);
 
-  if (!user) {
-    throw Response.errorNotFound(Response.NOT_FOUND('User'));
-  }
-
-  return Response.get({
-    id: user.id,
-    username: user.username,
-    email: user.email,
-    fullName: user.fullName,
-    gender: user.gender,
-    dateOfBirth: user.dateOfBirth,
-    createdAt: user.createdAt,
-    updatedAt: user.updatedAt,
-  });
-}
 
 }

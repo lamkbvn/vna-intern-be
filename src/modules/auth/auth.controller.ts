@@ -3,6 +3,7 @@ import { ResetPasswordDto } from './dto/reset-password.dto.js';
 import { Controller, Post, Body, Req, UseGuards, Get, HttpCode, HttpStatus } from '@nestjs/common';
 import { AuthService } from './auth.service.js';
 import { JwtAuthGuard } from '../../commons/guard/jwt-auth.guard.js';
+import { RefreshTokenDto } from './dto/refresh-token.dto.js';
 
 interface AuthenticatedRequest extends Request {
   user: {
@@ -13,7 +14,7 @@ interface AuthenticatedRequest extends Request {
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) { }
 
   @Post('login')
   login(@Body() body: { username: string; password: string }) {
@@ -21,13 +22,13 @@ export class AuthController {
   }
 
   @Post('refresh')
-  async refreshTokens(@Body('refreshToken') refreshToken: string, @Body('userId') userId: string) {
-    return this.authService.refreshTokens(userId, refreshToken);
+  async refreshTokens(@Body() dto: RefreshTokenDto) {
+    return this.authService.refreshTokens(dto.refreshToken);
   }
-
+  @UseGuards(JwtAuthGuard)
   @Post('logout')
-  async logout(@Req() req: any) {
-    const userId = req.user['sub']; // Lấy ID user từ token đã xác thực
+  async logout(@Req() req: AuthenticatedRequest) {
+    const userId = req.user.userId; // Lấy ID user từ token đã xác thực
     return this.authService.logout(userId);
   }
 
@@ -41,9 +42,6 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   async resetPassword(@Body() dto: ResetPasswordDto) {
     return this.authService.resetPassword(dto);
-  @UseGuards(JwtAuthGuard)
-  @Get('profile')
-  async getProfile(@Req() req: AuthenticatedRequest) {
-    return this.authService.getProfile(req.user.userId);
   }
+
 }
