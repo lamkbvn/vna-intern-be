@@ -31,13 +31,28 @@ export class User {
   @Column({ name: 'refresh_token_hash', type: 'varchar', length: 255, nullable: true, select: false, })
   refreshTokenHash: string | null;
 
-  // Trong user.entity.ts
   @Column({
     name: 'refresh_token_expires_at',
     type: 'timestamp',
     nullable: true
   })
   refreshTokenExpiresAt: Date | null;
+
+  @Column({
+    name: 'reset_password_otp_hash',
+    type: 'varchar',
+    length: 255,
+    nullable: true,
+    select: false,
+  })
+  resetPasswordOtpHash: string | null;
+
+  @Column({
+    name: 'reset_password_otp_expires_at',
+    type: 'timestamp',
+    nullable: true,
+  })
+  resetPasswordOtpExpiresAt: Date | null;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

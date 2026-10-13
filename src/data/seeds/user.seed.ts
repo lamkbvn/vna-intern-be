@@ -4,13 +4,6 @@ import { User, Gender } from '../../modules/users/user.entity.js';
 
 export async function seedUsers(dataSource: DataSource) {
   const userRepository = dataSource.getRepository(User);
-
-  const existingUser = await userRepository.findOneBy({ email: 'admin@example.com' });
-  if (existingUser) {
-    console.log('⏭️ Users already seeded. Skipping...');
-    return;
-  }
-
   const hashedPassword = await bcrypt.hash('123456', 10);
 
   const users = [
@@ -30,12 +23,26 @@ export async function seedUsers(dataSource: DataSource) {
       gender: Gender.MALE,
       dateOfBirth: '1995-05-15',
     },
+    {
+      username: 'ryushiki12',
+      passwordHash: hashedPassword,
+      email: 'ryushiki12@gmail.com',
+      fullName: 'Bang',
+      gender: Gender.MALE,
+      dateOfBirth: '2000-01-01',
+    },
   ];
 
   for (const userData of users) {
-    const user = userRepository.create(userData);
-    await userRepository.save(user);
+    const existing = await userRepository.findOneBy({ email: userData.email });
+    if (!existing) {
+      const user = userRepository.create(userData);
+      await userRepository.save(user);
+      console.log(`✅ Seeded user: ${userData.email}`);
+    } else {
+      console.log(`⏭️ User ${userData.email} already exists.`);
+    }
   }
 
-  console.log('✅ Users seeded successfully!');
+  console.log('✅ Users seeding process finished!');
 }
