@@ -85,6 +85,19 @@ export class UsersService {
         });
     }
 
+    async findByIdWithPassword(id: string) {
+        return this.userRepository.findOne({
+            where: { id },
+            select: {
+                id: true,
+                username: true,
+                email: true,
+                passwordHash: true,
+                fullName: true,
+            },
+        });
+    }
+
     async updateRefreshTokenData(userId: string, refreshTokenHash: string | null, refreshTokenExpiresAt: Date | null) {
         return this.userRepository.update(userId, {
             refreshTokenHash,
