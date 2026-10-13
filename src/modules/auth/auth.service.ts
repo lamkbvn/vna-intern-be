@@ -11,6 +11,7 @@ import ms from 'ms';
 
 import { UsersService } from '../users/users.service.js';
 import { MailService } from '../mail/mail.service.js';
+import Response, { ResponseData } from '../../commons/response.js';
 
 @Injectable()
 export class AuthService {
@@ -27,9 +28,7 @@ export class AuthService {
       await this.usersService.findByUsernameWithPassword(username);
 
     if (!user) {
-      throw new UnauthorizedException(
-        'Username hoặc password không chính xác',
-      );
+      throw Response.errorNotFound(Response.NOT_FOUND('User'));
     }
 
     // 2. Kiểm tra mật khẩu
@@ -39,9 +38,7 @@ export class AuthService {
     );
 
     if (!isPasswordValid) {
-      throw new UnauthorizedException(
-        'Username hoặc password không chính xác',
-      );
+      throw Response.errorBad(Response.WRONG_PASS);
     }
 
     // 3. Tạo payload dùng chung
@@ -85,18 +82,17 @@ export class AuthService {
     );
 
     // 7. Trả kết quả cho client
-    return {
+    return Response.get({
       accessToken,
       refreshToken,
       tokenType: 'Bearer',
-      expiresIn: 900,
       user: {
         id: user.id,
         username: user.username,
         email: user.email,
         fullName: user.fullName,
       },
-    };
+    });
   }
 
   // 1. Hàm làm mới Access Token khi hết hạn
@@ -105,12 +101,12 @@ export class AuthService {
     const user = await this.usersService.findByIdWithRefreshToken(userId);
 
     if (!user || !user.refreshTokenHash || !user.refreshTokenExpiresAt) {
-      throw new UnauthorizedException('Phiên đăng nhập không hợp lệ');
+      throw Response.errorUnauthorized(Response.EXPIRED_TOKEN);
     }
 
     // Kiểm tra xem Refresh Token trong DB đã hết hạn chưa
     if (new Date() > new Date(user.refreshTokenExpiresAt)) {
-      throw new UnauthorizedException('Refresh token đã hết hạn, vui lòng đăng nhập lại');
+      throw Response.errorUnauthorized(Response.EXPIRED_TOKEN);
     }
 
     // So sánh refresh token gửi lên với hash trong database
@@ -120,7 +116,7 @@ export class AuthService {
     );
 
     if (!isRefreshTokenValid) {
-      throw new UnauthorizedException('Refresh token không chính xác');
+      throw Response.errorUnauthorized(Response.WRONG_TOKEN);
     }
 
     // Tạo payload mới
@@ -153,18 +149,17 @@ export class AuthService {
       newRefreshTokenExpiresAt,
     );
 
-    return {
+    return Response.get({
       accessToken,
       refreshToken,
-      tokenType: 'Bearer',
-      expiresIn: 900,
-    };
+      tokenType: 'Bearer'
+    });
   }
 
   // 2. Hàm Logout (Xóa sạch token data trong DB)
   async logout(userId: string) {
     await this.usersService.updateRefreshTokenData(userId, null, null);
-    return { message: 'Đăng xuất thành công' };
+    return Response.get({ message: 'Đăng xuất thành công' });
   }
 
   // 3. Hàm Quên mật khẩu - gửi mã OTP
@@ -268,4 +263,25 @@ export class AuthService {
         'Đặt lại mật khẩu thành công. Vui lòng đăng nhập bằng mật khẩu mới.',
     };
   }
+
+  
+async getProfile(userId: string) {
+  const user = await this.usersService.findProfileById(userId);
+
+  if (!user) {
+    throw Response.errorNotFound(Response.NOT_FOUND('User'));
+  }
+
+  return Response.get({
+    id: user.id,
+    username: user.username,
+    email: user.email,
+    fullName: user.fullName,
+    gender: user.gender,
+    dateOfBirth: user.dateOfBirth,
+    createdAt: user.createdAt,
+    updatedAt: user.updatedAt,
+  });
+}
+
 }
