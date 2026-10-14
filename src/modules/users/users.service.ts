@@ -263,6 +263,30 @@ export class UsersService {
         });
     }
 
+    async clearResetPasswordOtp(email: string): Promise<void> {
+
+        const user = await this.userRepository.findOne({
+            where: { email },
+        });
+
+        if (!user) {
+            throw Response.errorNotFound(Response.NOT_FOUND('User'));
+        }
+
+        await this.userRepository.update(user.id, {
+            resetPasswordOtpHash: null,
+            resetPasswordOtpExpiresAt: null,
+        });
+    }
+
+    async clearChangeEmailOtp(userId: string): Promise<void> {
+        await this.userRepository.update(userId, {
+            changeEmailOtpHash: null,
+            changeEmailOtpExpiresAt: null,
+            changeEmailOtpVerified: false,
+        });
+    }
+
 
     async verifyEmailChangeOtp(userId: string, otp: string) {
         const user = await this.userRepository
