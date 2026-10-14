@@ -3,9 +3,29 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 import * as fs from 'fs';
 import * as path from 'path';
 
+export interface RawDistrict {
+  id: string;
+  name: string;
+  type?: string;
+}
+
+export interface RawCity {
+  id: string;
+  name: string;
+  type?: string;
+  districts?: RawDistrict[];
+}
+
+export interface RawProvince {
+  id: string;
+  name: string;
+  type?: string;
+  cities?: RawCity[];
+}
+
 @Injectable()
 export class LocationService implements OnModuleInit {
-  private provincesData: any[] = [];
+  private provincesData: RawProvince[] = [];
 
   // Đọc file JSON ngay khi NestJS khởi động để tối ưu hiệu năng (không phải đọc lại mỗi lần gọi API)
   onModuleInit() {
@@ -33,15 +53,15 @@ export class LocationService implements OnModuleInit {
   }
 
   // 2. Lấy Quận/Huyện theo ID Tỉnh/Thành phố
-getCitiesByProvinceId(provinceId: string) {
-    const province = this.provincesData.find((p: any) => p.id === provinceId);
+  getCitiesByProvinceId(provinceId: string) {
+    const province = this.provincesData.find((p) => p.id === provinceId);
     
     if (!province || !province.cities) {
       return [];
     }
 
     // Sử dụng map để chỉ trả về id, name, type của city và loại bỏ districts
-    return province.cities.map((city: any) => ({
+    return province.cities.map((city) => ({
       id: city.id,
       name: city.name,
       type: city.type,
@@ -51,9 +71,31 @@ getCitiesByProvinceId(provinceId: string) {
   // 3. Lấy Phường/Xã theo ID Quận/Huyện
   getDistrictsByCityId(provinceId: string, cityId: string) {
     const province = this.provincesData.find(p => p.id === provinceId);
-    if (!province) return [];
+    if (!province || !province.cities) return [];
 
-    const city = province.cities.find((c: any) => c.id === cityId);
-    return city ? city.districts : [];
+    const city = province.cities.find((c) => c.id === cityId);
+    return city && city.districts ? city.districts : [];
+  }
+
+  // 4. Lấy tất cả Phường/Xã theo ID Tỉnh/Thành phố
+  getWardsByProvinceId(provinceId: string) {
+    const province = this.provincesData.find((p) => p.id === provinceId);
+    if (!province || !province.cities) {
+      return [];
+    }
+
+    const wards: Array<{ id: string; name: string; provinceId: string }> = [];
+    for (const city of province.cities) {
+      if (city.districts) {
+        for (const district of city.districts) {
+          wards.push({
+            id: district.id,
+            name: `${district.name} (${city.name})`,
+            provinceId: province.id,
+          });
+        }
+      }
+    }
+    return wards;
   }
 }

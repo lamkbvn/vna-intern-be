@@ -3,6 +3,7 @@ import {
   UnauthorizedException,
   BadRequestException,
   NotFoundException,
+  HttpStatus,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
@@ -11,6 +12,7 @@ import ms, { StringValue } from 'ms';
 
 import { UsersService } from '../users/users.service.js';
 import { MailService } from '../mail/mail.service.js';
+import { ChangePasswordDto } from './dto/change-password.dto.js';
 import Response, { ResponseData } from '../../commons/response.js';
 
 @Injectable()
@@ -296,7 +298,38 @@ export class AuthService {
     };
   }
 
-  
+  // 5. Đổi mật khẩu cho người dùng đang đăng nhập
+  async changePassword(userId: string, dto: ChangePasswordDto) {
+    if (dto.newPassword !== dto.confirmPassword) {
+      throw new BadRequestException('Mật khẩu xác nhận không khớp');
+    }
 
+    if (dto.password === dto.newPassword) {
+      throw new BadRequestException('Mật khẩu mới không được trùng với mật khẩu cũ hiện tại');
+    }
 
+    const user = await this.usersService.findByIdWithPassword(userId);
+    if (!user) {
+      throw new NotFoundException('Người dùng không tồn tại');
+    }
+
+    const isPasswordValid = await bcrypt.compare(
+      dto.password,
+      user.passwordHash,
+    );
+
+    if (!isPasswordValid) {
+      throw new BadRequestException('Mật khẩu cũ không chính xác. Vui lòng kiểm tra lại');
+    }
+
+    const newPasswordHash = await bcrypt.hash(dto.newPassword, 10);
+    // Cập nhật mật khẩu mới và xóa refresh token cũ để vô hiệu hóa phiên cũ
+    await this.usersService.updatePassword(user.id, newPasswordHash);
+
+    return {
+      code: HttpStatus.OK,
+      success: true,
+      message: 'Đổi mật khẩu thành công! Hệ thống sẽ tự động đăng xuất ngay bây giờ!',
+    };
+  }
 }
