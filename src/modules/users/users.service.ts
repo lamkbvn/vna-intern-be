@@ -39,12 +39,46 @@ export class UsersService {
     }
 
 
-    findAll(): Promise<User[]> {
-        return this.userRepository.find();
+    async findAll(): Promise<User[]> {
+        return await this.userRepository.find();
     }
 
-    findByEmail(email: string): Promise<User | null> {
-        return this.userRepository.findOne({
+    async findAllByPage(pageNumber :number, pageSize : number) {
+        // Kiểm tra và giới hạn giá trị phân trang
+        pageNumber = Math.max(1, Math.floor(pageNumber));
+        pageSize = Math.min(100, Math.max(1, Math.floor(pageSize)));
+
+        const users = await this.userRepository.find({
+            select: {
+                id: true,
+                username: true,
+                email: true,
+                fullName: true,
+                gender: true,
+                dateOfBirth: true,
+                province: true,
+                district: true,
+                streetAddress: true,
+                createdAt: true,
+                updatedAt: true,
+            },
+            order: {
+                createdAt: 'DESC',
+                id: 'ASC',
+            },
+            skip: (pageNumber - 1) * pageSize,
+            take: pageSize,
+        });
+
+        return Response.getList({
+            items: users,
+            pageNumber,
+            pageSize,
+        });
+    }
+
+    async findByEmail(email: string): Promise<User | null> {
+        return await this.userRepository.findOne({
             where: { email },
         });
     }
