@@ -2,6 +2,7 @@
 import {
     Body,
     Controller,
+    Delete,
     Get,
     Patch,
     Post,
@@ -86,6 +87,36 @@ export class UsersController {
             req.user.userId,
             dto.newEmail,
         );
+    }
+
+    // Xóa OTP đặt lại mật khẩu
+    @UseGuards(JwtAuthGuard)
+    @Delete('otp/reset-password')
+    async clearResetPasswordOtp(
+        @Body() body: { email : string; },
+    ) {
+        await this.usersService.clearResetPasswordOtp(
+            body.email,
+        );
+
+        return {
+            message: 'Đã xóa OTP đặt lại mật khẩu',
+        };
+    }
+
+    // Xóa OTP thay đổi email
+    @UseGuards(JwtAuthGuard)
+    @Delete('otp/change-email')
+    async clearChangeEmailOtp(
+        @Req() req: AuthenticatedRequest,
+    ) {
+        await this.usersService.clearChangeEmailOtp(
+            req.user.userId,
+        );
+
+        return {
+            message: 'Đã xóa OTP thay đổi email',
+        };
     }
 
 }
