@@ -26,6 +26,7 @@ export class AuthController {
   async refreshTokens(@Body() dto: RefreshTokenDto) {
     return this.authService.refreshTokens(dto.refreshToken);
   }
+  
   @UseGuards(JwtAuthGuard)
   @Post('logout')
   async logout(@Req() req: AuthenticatedRequest) {

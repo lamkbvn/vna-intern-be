@@ -5,7 +5,7 @@ import {
   NotFoundException,
   HttpStatus,
 } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
+import { JwtService, TokenExpiredError } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
 import ms, { StringValue } from 'ms';
@@ -101,15 +101,24 @@ export class AuthService {
   // 1. Xác minh chữ ký và thời hạn của refresh token
   let payload: { sub: string; username: string };
 
-  try {
-    payload = await this.jwtService.verifyAsync(incomingRefreshToken, {
-      secret: this.configService.getOrThrow<string>(
-        'JWT_REFRESH_SECRET',
-      ),
-    });
-  } catch {
+ try {
+  payload = await this.jwtService.verifyAsync(incomingRefreshToken, {
+    secret: this.configService.getOrThrow<string>(
+      'JWT_REFRESH_SECRET',
+    ),
+  });
+} catch (error) {
+  if (error instanceof TokenExpiredError) {
     throw Response.errorUnauthorized(Response.EXPIRED_TOKEN);
   }
+
+  console.error(
+    'Refresh token verification error:',
+    error instanceof Error ? error.message : error,
+  );
+
+  throw Response.errorUnauthorized(Response.WRONG_TOKEN);
+}
 
   if (!payload.sub || !payload.username) {
     throw Response.errorUnauthorized(Response.WRONG_TOKEN);

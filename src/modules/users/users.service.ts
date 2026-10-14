@@ -8,6 +8,7 @@ import { MailService } from '../mail/mail.service.js';
 import { BadRequestException } from '../../commons/error.js';
 import { randomInt } from 'crypto';
 import bcrypt from 'bcrypt';
+import { CreateUserDto } from './dto/create-user.dto.js';
 
 
 @Injectable()
@@ -43,7 +44,7 @@ export class UsersService {
         return await this.userRepository.find();
     }
 
-    async findAllByPage(pageNumber :number, pageSize : number) {
+    async findAllByPage(pageNumber: number, pageSize: number) {
         // Kiểm tra và giới hạn giá trị phân trang
         pageNumber = Math.max(1, Math.floor(pageNumber));
         pageSize = Math.min(100, Math.max(1, Math.floor(pageSize)));
@@ -97,12 +98,53 @@ export class UsersService {
         });
     }
 
-    async create(data: {
-        email: string;
-        passwordHash: string;
-    }) {
-        const user = this.userRepository.create(data);
-        return this.userRepository.save(user);
+    async createUser(dto: CreateUserDto) {
+        // 1. Kiểm tra email đã tồn tại
+        const existingEmailUser = await this.userRepository.findOne({
+            where: { email: dto.email.toLowerCase().trim() },
+        });
+
+        if (existingEmailUser) {
+            throw Response.errorBad(Response.EXISTED('Email'));
+        }
+
+        const existingUsernameUser = await this.userRepository.findOne({
+            where: { username: dto.username },
+        });
+        
+        if (existingUsernameUser) {
+            throw Response.errorBad(Response.EXISTED('Username'));
+        }
+
+        // 2. Mã hóa mật khẩu
+        const passwordHash = await bcrypt.hash(dto.password, 12);
+
+        // 3. Tạo user mới
+        const user = this.userRepository.create({
+            username: dto.username,
+            email: dto.email.toLowerCase().trim(),
+            passwordHash,
+            fullName: dto.fullName,
+            gender: dto.gender,
+            dateOfBirth: dto.dateOfBirth,
+            province: dto.province,
+            district: dto.district,
+            streetAddress: dto.streetAddress,
+        });
+
+        // 4. Lưu vào database
+        const savedUser = await this.userRepository.save(user);
+
+        // 5. Không trả về passwordHash
+        const {
+            passwordHash: _passwordHash,
+            refreshTokenHash: _refreshTokenHash,
+            resetPasswordOtpHash: _resetPasswordOtpHash,
+            changeEmailOtpHash: _changeEmailOtpHash,
+            ...result
+        } = savedUser;
+
+        return Response.get(result);
     }
 
 
@@ -133,7 +175,7 @@ export class UsersService {
     }
 
     async updateRefreshTokenData(userId: string, refreshTokenHash: string | null, refreshTokenExpiresAt: Date | null) {
-        return this.userRepository.update(userId, {
+        return await this.userRepository.update(userId, {
             refreshTokenHash,
             refreshTokenExpiresAt,
         });
@@ -142,7 +184,7 @@ export class UsersService {
     async findByIdWithRefreshToken(id: string) {
         return this.userRepository.findOne({
             where: { id },
-            select: ['id', 'username', 'refreshTokenHash'],
+            select: ['id', 'username', 'refreshTokenHash' , 'refreshTokenExpiresAt'],
         });
     }
 

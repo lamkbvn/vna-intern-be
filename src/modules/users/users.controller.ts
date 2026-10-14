@@ -20,6 +20,7 @@ import { JwtAuthGuard } from '../../commons/guard/jwt-auth.guard.js';
 import { VerifyEmailChangeDto } from './dto/verify-email-change.dto.js';
 import { ChangeEmailDto } from './dto/change-email.dto.js';
 import { PaginationDto } from '../../commons/baseDto/pagination.dto.js';
+import { CreateUserDto } from './dto/create-user.dto.js';
 
 interface AuthenticatedRequest extends Request {
     user: {
@@ -57,6 +58,12 @@ export class UsersController {
     async getProfilebyid(@Param('id') id: string) {
         console.log('User từ access token:', id);
         return this.usersService.getProfile(id);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Post('create')
+    async createUser(@Body() dto: CreateUserDto) {
+        return this.usersService.createUser(dto);
     }
 
     // PATCH /users/profile
