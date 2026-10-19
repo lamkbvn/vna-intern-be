@@ -1,4 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 export enum Gender {
   MALE = 'male',
@@ -13,7 +19,12 @@ export class User {
   @Column({ name: 'username', type: 'varchar', length: 100, nullable: false })
   username: string;
 
-  @Column({ name: 'password_hash', type: 'varchar', length: 255, select: false })
+  @Column({
+    name: 'password_hash',
+    type: 'varchar',
+    length: 255,
+    select: false,
+  })
   passwordHash: string;
 
   @Column({ type: 'varchar', unique: true, length: 255 })
@@ -28,13 +39,19 @@ export class User {
   @Column({ name: 'date_of_birth', type: 'date', nullable: true })
   dateOfBirth: string | null;
 
-  @Column({ name: 'refresh_token_hash', type: 'varchar', length: 255, nullable: true, select: false, })
+  @Column({
+    name: 'refresh_token_hash',
+    type: 'varchar',
+    length: 255,
+    nullable: true,
+    select: false,
+  })
   refreshTokenHash: string | null;
 
   @Column({
     name: 'refresh_token_expires_at',
     type: 'timestamp',
-    nullable: true
+    nullable: true,
   })
   refreshTokenExpiresAt: Date | null;
 
@@ -54,7 +71,6 @@ export class User {
   })
   resetPasswordOtpExpiresAt: Date | null;
 
-
   @Column({
     name: 'change_email_otp_hash',
     type: 'varchar',
@@ -72,11 +88,11 @@ export class User {
   changeEmailOtpExpiresAt: Date | null;
 
   @Column({
-  name: 'change_email_otp_verified',
-  type: 'boolean',
-  default: false,
-})
-changeEmailOtpVerified: boolean;
+    name: 'change_email_otp_verified',
+    type: 'boolean',
+    default: false,
+  })
+  changeEmailOtpVerified: boolean;
 
   @Column({ type: 'varchar', nullable: true })
   province: string | null;

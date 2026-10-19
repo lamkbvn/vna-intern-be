@@ -4,6 +4,7 @@ import AppDataSource from './data-source.js';
 import { seedUsers } from './seeds/user.seed.js';
 import { seedBusinessIndustries } from './seeds/business-industry.seed.js';
 import { seedBusinessTypes } from './seeds/business-type.seed.js';
+import { seedBusinesses } from './seeds/business.seed.js';
 
 async function runSeed() {
   try {
@@ -14,6 +15,7 @@ async function runSeed() {
     await seedUsers(AppDataSource);
     await seedBusinessIndustries(AppDataSource);
     await seedBusinessTypes(AppDataSource);
+    await seedBusinesses(AppDataSource);
 
     console.log('🎉 All seeders executed successfully!');
   } catch (error) {

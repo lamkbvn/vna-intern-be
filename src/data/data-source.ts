@@ -3,6 +3,7 @@ import { DataSource } from 'typeorm';
 import { User } from '../modules/users/user.entity.js';
 import { BusinessIndustry } from '../modules/business-industries/entities/business-industry.entity.js';
 import { BusinessType } from '../modules/business-types/entities/business-type.entity.js';
+import { Business } from '../modules/business/entities/business.entity.js';
 
 export default new DataSource({
   type: 'postgres',
@@ -13,7 +14,7 @@ export default new DataSource({
   database: process.env.DB_DATABASE,
 
   // Các entity của hệ thống
-  entities: [User, BusinessIndustry, BusinessType],
+  entities: [User, BusinessIndustry, BusinessType, Business],
   migrations: ['src/migrations/*.ts'],
 
   synchronize: false,
