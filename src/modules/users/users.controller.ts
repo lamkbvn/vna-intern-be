@@ -1,5 +1,6 @@
 
 import {
+    BadRequestException,
     Body,
     Controller,
     Delete,
@@ -9,9 +10,15 @@ import {
     Post,
     Query,
     Req,
+    UploadedFile,
     UseGuards,
+    UseInterceptors,
 } from '@nestjs/common';
 import type { Request } from 'express';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { extname, join } from 'path';
+import { existsSync, mkdirSync } from 'fs';
 
 import { UsersService } from './users.service.js';
 import { AuthService } from '../auth/auth.service.js';
@@ -58,6 +65,50 @@ export class UsersController {
     async getProfilebyid(@Param('id') id: string) {
         console.log('User từ access token:', id);
         return this.usersService.getProfile(id);
+    }
+
+    // POST /users/avatar
+    // Upload ảnh đại diện lưu vào thư mục cục bộ uploads/avatars
+    @UseGuards(JwtAuthGuard)
+    @Post('avatar')
+    @UseInterceptors(
+        FileInterceptor('file', {
+            storage: diskStorage({
+                destination: (_req, _file, cb) => {
+                    const uploadPath = join(process.cwd(), 'uploads', 'avatars');
+                    if (!existsSync(uploadPath)) {
+                        mkdirSync(uploadPath, { recursive: true });
+                    }
+                    cb(null, uploadPath);
+                },
+                filename: (req: any, file, cb) => {
+                    const userId = req.user?.userId || 'user';
+                    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+                    const ext = extname(file.originalname).toLowerCase();
+                    cb(null, `${userId}-${uniqueSuffix}${ext}`);
+                },
+            }),
+            limits: { fileSize: 5 * 1024 * 1024 }, // Tối đa 5MB
+            fileFilter: (_req, file, cb) => {
+                if (!file.mimetype.match(/\/(jpg|jpeg|png|webp|gif)$/i)) {
+                    return cb(
+                        new BadRequestException('Chỉ chấp nhận các định dạng ảnh: jpg, jpeg, png, webp, gif'),
+                        false,
+                    );
+                }
+                cb(null, true);
+            },
+        }),
+    )
+    async uploadAvatar(
+        @Req() req: AuthenticatedRequest,
+        @UploadedFile() file?: Express.Multer.File,
+    ) {
+        if (!file) {
+            throw new BadRequestException('Không tìm thấy file ảnh được tải lên');
+        }
+        const avatarUrl = `/uploads/avatars/${file.filename}`;
+        return this.usersService.updateAvatar(req.user.userId, avatarUrl);
     }
 
     @UseGuards(JwtAuthGuard)

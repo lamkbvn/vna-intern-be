@@ -30,7 +30,7 @@ export class AuthService {
       await this.usersService.findByUsernameWithPassword(username);
 
     if (!user) {
-      throw Response.errorNotFound(Response.NOT_FOUND('User'));
+      throw new UnauthorizedException('Tên tài khoản hoặc mật khẩu không chính xác');
     }
 
     // 2. Kiểm tra mật khẩu
@@ -40,13 +40,17 @@ export class AuthService {
     );
 
     if (!isPasswordValid) {
-      throw Response.errorBad(Response.WRONG_PASS);
+      throw new UnauthorizedException('Tên tài khoản hoặc mật khẩu không chính xác');
     }
 
-    // 3. Tạo payload dùng chung
+    // 3. Tạo payload dùng chung (có đầy đủ role và businessId)
     const payload = {
       sub: user.id,
       username: user.username,
+      role: user.role,
+      roleCode: user.role, // For FE compatibility
+      accountType: user.role, // For FE compatibility ('ADMIN' | 'DOANH_NGHIEP')
+      businessId: user.businessId ?? null,
     };
 
     // 4. Tạo access token và refresh token
@@ -93,6 +97,10 @@ export class AuthService {
         username: user.username,
         email: user.email,
         fullName: user.fullName,
+        role: user.role,
+        roleCode: user.role,
+        accountType: user.role,
+        businessId: user.businessId ?? null,
       },
     });
   }
@@ -152,6 +160,10 @@ export class AuthService {
   const newPayload = {
     sub: user.id,
     username: user.username,
+    role: user.role,
+    roleCode: user.role,
+    accountType: user.role,
+    businessId: user.businessId ?? null,
   };
 
   // 6. Tạo cặp token mới

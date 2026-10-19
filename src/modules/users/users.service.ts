@@ -1,7 +1,7 @@
 import { ConflictException, Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User } from './user.entity.js';
+import { User, UserRole } from './user.entity.js';
 import { UpdateProfileDto } from './dto/update-profile.dto.js';
 import Response, { ResponseData } from '../../commons/response.js';
 import { MailService } from '../mail/mail.service.js';
@@ -33,6 +33,9 @@ export class UsersService {
                 province: true,
                 district: true,
                 streetAddress: true,
+                avatar: true,
+                role: true,
+                businessId: true,
                 createdAt: true,
                 updatedAt: true,
             },
@@ -60,6 +63,9 @@ export class UsersService {
                 province: true,
                 district: true,
                 streetAddress: true,
+                avatar: true,
+                role: true,
+                businessId: true,
                 createdAt: true,
                 updatedAt: true,
             },
@@ -130,6 +136,7 @@ export class UsersService {
             province: dto.province,
             district: dto.district,
             streetAddress: dto.streetAddress,
+            role: dto.role || UserRole.DOANH_NGHIEP,
         });
 
         // 4. Lưu vào database
@@ -157,6 +164,8 @@ export class UsersService {
                 email: true,
                 passwordHash: true,
                 fullName: true,
+                role: true,
+                businessId: true,
             },
         });
     }
@@ -170,6 +179,8 @@ export class UsersService {
                 email: true,
                 passwordHash: true,
                 fullName: true,
+                role: true,
+                businessId: true,
             },
         });
     }
@@ -184,7 +195,7 @@ export class UsersService {
     async findByIdWithRefreshToken(id: string) {
         return this.userRepository.findOne({
             where: { id },
-            select: ['id', 'username', 'refreshTokenHash' , 'refreshTokenExpiresAt'],
+            select: ['id', 'username', 'role', 'businessId', 'refreshTokenHash', 'refreshTokenExpiresAt'],
         });
     }
 
@@ -258,6 +269,14 @@ export class UsersService {
             user.streetAddress = dto.streetAddress;
         }
 
+        if (dto.role !== undefined) {
+            user.role = dto.role;
+        }
+
+        if (dto.avatar !== undefined) {
+            user.avatar = dto.avatar;
+        }
+
         const updatedUser = await this.userRepository.save(user);
 
         return Response.get({
@@ -270,8 +289,29 @@ export class UsersService {
             province: updatedUser.province,
             district: updatedUser.district,
             streetAddress: updatedUser.streetAddress,
+            avatar: updatedUser.avatar,
+            role: updatedUser.role,
+            businessId: updatedUser.businessId,
             createdAt: updatedUser.createdAt,
             updatedAt: updatedUser.updatedAt,
+        });
+    }
+
+    async updateAvatar(userId: string, avatarUrl: string | null) {
+        const user = await this.userRepository.findOne({
+            where: { id: userId },
+        });
+
+        if (!user) {
+            throw Response.errorNotFound(Response.NOT_FOUND('User'));
+        }
+
+        user.avatar = avatarUrl;
+        await this.userRepository.save(user);
+
+        return Response.get({
+            message: 'Cập nhật ảnh đại diện thành công',
+            avatar: avatarUrl,
         });
     }
 
@@ -292,6 +332,9 @@ export class UsersService {
             province: user.province,
             district: user.district,
             streetAddress: user.streetAddress,
+            avatar: user.avatar,
+            role: user.role,
+            businessId: user.businessId,
             createdAt: user.createdAt,
             updatedAt: user.updatedAt,
         });

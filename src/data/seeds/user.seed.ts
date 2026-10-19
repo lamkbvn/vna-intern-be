@@ -1,6 +1,6 @@
 import { DataSource } from 'typeorm';
 import bcrypt from 'bcrypt';
-import { User, Gender } from '../../modules/users/user.entity.js';
+import { User, Gender, UserRole } from '../../modules/users/user.entity.js';
 
 export async function seedUsers(dataSource: DataSource) {
   const userRepository = dataSource.getRepository(User);
@@ -14,6 +14,7 @@ export async function seedUsers(dataSource: DataSource) {
       fullName: 'System Administrator',
       gender: Gender.MALE,
       dateOfBirth: '1990-01-01',
+      role: UserRole.ADMIN,
     },
     {
       username: 'johndoe',
@@ -22,6 +23,7 @@ export async function seedUsers(dataSource: DataSource) {
       fullName: 'John Doe',
       gender: Gender.MALE,
       dateOfBirth: '1995-05-15',
+      role: UserRole.DOANH_NGHIEP,
     },
     {
       username: 'ryushiki12',
@@ -30,6 +32,7 @@ export async function seedUsers(dataSource: DataSource) {
       fullName: 'Bang',
       gender: Gender.MALE,
       dateOfBirth: '2000-01-01',
+      role: UserRole.DOANH_NGHIEP,
     },
   ];
 

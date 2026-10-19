@@ -6,10 +6,14 @@ import {
   IsString,
   MaxLength,
 } from 'class-validator';
-import { Gender } from '../user.entity.js';
+import { Gender, UserRole } from '../user.entity.js';
 
 
 export class UpdateProfileDto {
+  @IsOptional()
+  @IsEnum(UserRole)
+  role?: UserRole;
+
   @IsOptional()
   @IsString()
   @MaxLength(100)
@@ -37,4 +41,9 @@ export class UpdateProfileDto {
   @IsString()
   @MaxLength(500)
   streetAddress?: string | null;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(500)
+  avatar?: string | null;
 }

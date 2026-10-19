@@ -7,10 +7,14 @@ import {
   IsString,
   MaxLength,
 } from 'class-validator';
-import { Gender } from '../user.entity.js';
+import { Gender, UserRole } from '../user.entity.js';
 
 
 export class CreateUserDto {
+  @IsOptional()
+  @IsEnum(UserRole)
+  role?: UserRole;
+
   @IsString()
   @IsNotEmpty()
   @MaxLength(100)
