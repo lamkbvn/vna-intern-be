@@ -8,6 +8,9 @@ import { AuthModule } from './modules/auth/auth.module.js';
 import { LocationModule } from './modules/location/location.module.js';
 import { CategoryController } from './modules/category/category.controller.js';
 import { CategoryService } from './modules/category/category.service.js';
+import { BusinessModule } from './modules/business/business.module.js';
+import { BusinessIndustriesModule } from './modules/business-industries/business-industries.module.js';
+import { BusinessTypesModule } from './modules/business-types/business-types.module.js';
 
 @Module({
   imports: [
@@ -31,6 +34,9 @@ import { CategoryService } from './modules/category/category.service.js';
     UsersModule,
     AuthModule,
     LocationModule,
+    BusinessModule,
+    BusinessIndustriesModule,
+    BusinessTypesModule,
   ],
   controllers: [AppController, CategoryController],
   providers: [AppService, CategoryService],

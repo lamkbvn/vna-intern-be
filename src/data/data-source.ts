@@ -1,8 +1,8 @@
-
 import 'dotenv/config';
 import { DataSource } from 'typeorm';
 import { User } from '../modules/users/user.entity.js';
-
+import { BusinessIndustry } from '../modules/business-industries/entities/business-industry.entity.js';
+import { BusinessType } from '../modules/business-types/entities/business-type.entity.js';
 
 export default new DataSource({
   type: 'postgres',
@@ -12,8 +12,8 @@ export default new DataSource({
   password: process.env.DB_PASSWORD,
   database: process.env.DB_DATABASE,
 
-  //them entity khac vao day
-  entities: [User],
+  // Các entity của hệ thống
+  entities: [User, BusinessIndustry, BusinessType],
   migrations: ['src/migrations/*.ts'],
 
   synchronize: false,
