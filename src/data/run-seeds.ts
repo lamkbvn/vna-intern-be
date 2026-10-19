@@ -2,6 +2,8 @@ import 'reflect-metadata';
 import 'dotenv/config';
 import AppDataSource from './data-source.js';
 import { seedUsers } from './seeds/user.seed.js';
+import { seedBusinessIndustries } from './seeds/business-industry.seed.js';
+import { seedBusinessTypes } from './seeds/business-type.seed.js';
 
 async function runSeed() {
   try {
@@ -10,7 +12,8 @@ async function runSeed() {
 
     // Chạy theo đúng thứ tự phụ thuộc
     await seedUsers(AppDataSource);
-    // await seedOtherTables(AppDataSource); // Thêm các bảng khác vào đây
+    await seedBusinessIndustries(AppDataSource);
+    await seedBusinessTypes(AppDataSource);
 
     console.log('🎉 All seeders executed successfully!');
   } catch (error) {
@@ -22,4 +25,4 @@ async function runSeed() {
   }
 }
 
-runSeed();
+void runSeed();
