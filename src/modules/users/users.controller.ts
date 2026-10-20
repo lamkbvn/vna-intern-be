@@ -29,6 +29,7 @@ import { ChangeEmailDto } from './dto/change-email.dto.js';
 import { PaginationDto } from '../../commons/baseDto/pagination.dto.js';
 import { CreateUserDto } from './dto/create-user.dto.js';
 import Response from '../../commons/response.js';
+import * as bcrypt from 'bcrypt';
 
 interface AuthenticatedRequest extends Request {
     user: {
@@ -37,7 +38,7 @@ interface AuthenticatedRequest extends Request {
     };
 }
 
-@Controller('users')
+@Controller(['users', 'user'])
 export class UsersController {
     constructor(
         private readonly usersService: UsersService
@@ -149,6 +150,23 @@ export class UsersController {
             id,
             dto,
         );
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Patch(':id/reset-password')
+    async resetUserPassword(
+        @Param('id') id: string,
+        @Body() body: { newPassword?: string; password?: string },
+    ) {
+        const pwd = body.newPassword || body.password;
+        if (!pwd || !pwd.trim()) {
+            throw new BadRequestException('Vui lòng nhập mật khẩu mới');
+        }
+        const passwordHash = await bcrypt.hash(pwd.trim(), 12);
+        await this.usersService.updatePassword(id, passwordHash);
+        return Response.get({
+            message: 'Khởi tạo mật khẩu thành công',
+        });
     }
 
 
