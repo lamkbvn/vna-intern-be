@@ -33,7 +33,12 @@ export class AuthService {
       throw new UnauthorizedException('Tên tài khoản hoặc mật khẩu không chính xác');
     }
 
-    // 2. Kiểm tra mật khẩu
+    // 2. Kiểm tra trạng thái tài khoản
+    if (user.isActive === false) {
+      throw new UnauthorizedException('Tài khoản đã bị khóa. Vui lòng liên hệ quản trị viên.');
+    }
+
+    // 3. Kiểm tra mật khẩu
     const isPasswordValid = await bcrypt.compare(
       password,
       user.passwordHash,
@@ -139,6 +144,10 @@ export class AuthService {
 
   if (!user || !user.refreshTokenHash || !user.refreshTokenExpiresAt) {
     throw Response.errorUnauthorized(Response.EXPIRED_TOKEN);
+  }
+
+  if (user.isActive === false) {
+    throw Response.errorUnauthorized('Tài khoản đã bị khóa. Vui lòng liên hệ quản trị viên.');
   }
 
   // 3. Kiểm tra hạn refresh token trong database

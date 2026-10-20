@@ -84,6 +84,8 @@ export class BusinessService {
       representativePhone: dto.representativePhone?.trim() || null,
       businessTypeId: dto.businessTypeId,
       businessIndustryId: dto.businessIndustryId,
+      gpkdFilePath: dto.gpkdFilePath || null,
+      otherDocumentPath: dto.otherDocumentPath || null,
       isActive: dto.isActive !== undefined ? dto.isActive : true,
     });
 
@@ -153,31 +155,38 @@ export class BusinessService {
     });
   }
 
-  // 3. GET /business/:id: Chi tiết doanh nghiệp
-  async findOne(id: string) {
+  private getWhereByIdOrTaxCode(identifier: string) {
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(identifier);
+    return isUuid ? { id: identifier } : { taxCode: identifier };
+  }
+
+  // 3. GET /business/:id: Chi tiết doanh nghiệp (hỗ trợ cả UUID và mã số thuế)
+  async findOne(identifier: string) {
+    const where = this.getWhereByIdOrTaxCode(identifier);
     const business = await this.businessRepository.findOne({
-      where: { id },
+      where,
       relations: ['businessType', 'businessIndustry'],
     });
 
     if (!business) {
       throw new NotFoundException(
-        `Không tìm thấy doanh nghiệp với id: "${id}"`,
+        `Không tìm thấy doanh nghiệp với mã hoặc id: "${identifier}"`,
       );
     }
 
     return Response.get(business);
   }
 
-  // 4. PATCH /business/:id: Cập nhật thông tin doanh nghiệp
-  async update(id: string, dto: UpdateBusinessDto) {
+  // 4. PATCH /business/:id: Cập nhật thông tin doanh nghiệp (hỗ trợ cả UUID và mã số thuế)
+  async update(identifier: string, dto: UpdateBusinessDto) {
+    const where = this.getWhereByIdOrTaxCode(identifier);
     const business = await this.businessRepository.findOne({
-      where: { id },
+      where,
     });
 
     if (!business) {
       throw new NotFoundException(
-        `Không tìm thấy doanh nghiệp với id: "${id}"`,
+        `Không tìm thấy doanh nghiệp với mã hoặc id: "${identifier}"`,
       );
     }
 
@@ -195,7 +204,7 @@ export class BusinessService {
       const existing = await this.businessRepository.findOne({
         where: { taxCode: newTaxCode },
       });
-      if (existing && existing.id !== id) {
+      if (existing && existing.id !== business.id) {
         throw new BadRequestException(
           `Mã số thuế "${newTaxCode}" đã được đăng ký bởi doanh nghiệp khác.`,
         );
@@ -258,21 +267,26 @@ export class BusinessService {
       business.representativeName = dto.representativeName ? dto.representativeName.trim() : null;
     if (dto.representativePhone !== undefined)
       business.representativePhone = dto.representativePhone ? dto.representativePhone.trim() : null;
+    if (dto.gpkdFilePath !== undefined)
+      business.gpkdFilePath = dto.gpkdFilePath ? dto.gpkdFilePath.trim() : null;
+    if (dto.otherDocumentPath !== undefined)
+      business.otherDocumentPath = dto.otherDocumentPath ? dto.otherDocumentPath.trim() : null;
     if (dto.isActive !== undefined) business.isActive = dto.isActive;
 
     await this.businessRepository.save(business);
-    return this.findOne(id);
+    return this.findOne(business.id);
   }
 
-  // 5. DELETE /business/:id: Xóa doanh nghiệp
-  async remove(id: string) {
+  // 5. DELETE /business/:id: Xóa doanh nghiệp (hỗ trợ cả UUID và mã số thuế)
+  async remove(identifier: string) {
+    const where = this.getWhereByIdOrTaxCode(identifier);
     const business = await this.businessRepository.findOne({
-      where: { id },
+      where,
     });
 
     if (!business) {
       throw new NotFoundException(
-        `Không tìm thấy doanh nghiệp với id: "${id}"`,
+        `Không tìm thấy doanh nghiệp với mã hoặc id: "${identifier}"`,
       );
     }
 
@@ -280,7 +294,7 @@ export class BusinessService {
 
     return Response.get({
       message: `Đã xóa thành công doanh nghiệp "${business.name}" (${business.taxCode})`,
-      id,
+      id: business.id,
     });
   }
 }

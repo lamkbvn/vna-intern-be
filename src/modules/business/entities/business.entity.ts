@@ -141,6 +141,12 @@ export class Business {
   @JoinColumn({ name: 'business_industry_id' })
   businessIndustry: BusinessIndustry;
 
+  @Column({ name: 'gpkd_file_path', type: 'text', nullable: true })
+  gpkdFilePath: string | null;
+
+  @Column({ name: 'other_document_path', type: 'text', nullable: true })
+  otherDocumentPath: string | null;
+
   @Column({ name: 'is_active', type: 'boolean', default: true })
   isActive: boolean;
 

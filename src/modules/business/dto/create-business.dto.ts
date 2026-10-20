@@ -104,6 +104,16 @@ export class CreateBusinessDto {
   @IsNotEmpty()
   businessIndustryId: string;
 
+  // Đường dẫn Giấy phép kinh doanh (optional)
+  @IsOptional()
+  @IsString()
+  gpkdFilePath?: string;
+
+  // Đường dẫn tài liệu khác (optional)
+  @IsOptional()
+  @IsString()
+  otherDocumentPath?: string;
+
   // Trạng thái hoạt động
   @IsOptional()
   @IsBoolean()

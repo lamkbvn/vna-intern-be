@@ -173,6 +173,7 @@ export class UsersService {
                 fullName: true,
                 role: true,
                 businessId: true,
+                isActive: true,
             },
         });
     }
@@ -188,6 +189,7 @@ export class UsersService {
                 fullName: true,
                 role: true,
                 businessId: true,
+                isActive: true,
             },
         });
     }
@@ -202,7 +204,7 @@ export class UsersService {
     async findByIdWithRefreshToken(id: string) {
         return this.userRepository.findOne({
             where: { id },
-            select: ['id', 'username', 'role', 'businessId', 'refreshTokenHash', 'refreshTokenExpiresAt'],
+            select: ['id', 'username', 'role', 'businessId', 'isActive', 'refreshTokenHash', 'refreshTokenExpiresAt'],
         });
     }
 
@@ -290,6 +292,10 @@ export class UsersService {
 
         if (dto.isActive !== undefined) {
             user.isActive = dto.isActive;
+            if (dto.isActive === false) {
+                user.refreshTokenHash = null;
+                user.refreshTokenExpiresAt = null;
+            }
         }
 
         const updatedUser = await this.userRepository.save(user);
@@ -398,6 +404,7 @@ export class UsersService {
         return Response.get({
             message: 'OTP đã được gửi đến email hiện tại',
             expiresIn: 600,
+            devOtp: process.env.NODE_ENV !== 'production' ? otp : undefined,
         });
     }
 

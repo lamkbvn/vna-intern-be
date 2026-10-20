@@ -11,6 +11,7 @@ import { CategoryService } from './modules/category/category.service.js';
 import { BusinessModule } from './modules/business/business.module.js';
 import { BusinessIndustriesModule } from './modules/business-industries/business-industries.module.js';
 import { BusinessTypesModule } from './modules/business-types/business-types.module.js';
+import { UploadModule } from './modules/upload/upload.module.js';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { BusinessTypesModule } from './modules/business-types/business-types.mod
     BusinessModule,
     BusinessIndustriesModule,
     BusinessTypesModule,
+    UploadModule,
   ],
   controllers: [AppController, CategoryController],
   providers: [AppService, CategoryService],
