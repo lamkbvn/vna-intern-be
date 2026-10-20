@@ -5,6 +5,8 @@ import {
   IsNotEmpty,
   IsOptional,
   IsString,
+  Length,
+  Matches,
   MaxLength,
 } from 'class-validator';
 import { Gender, UserRole } from '../user.entity.js';
@@ -15,21 +17,22 @@ export class CreateUserDto {
   role?: UserRole;
 
   @IsString()
-  @IsNotEmpty()
-  @MaxLength(100)
+  @IsNotEmpty({ message: 'Tên đăng nhập không được để trống' })
+  @Length(4, 30, { message: 'Tên đăng nhập phải có độ dài từ 4 đến 30 ký tự' })
+  @Matches(/^[a-zA-Z0-9_]+$/, { message: 'Tên đăng nhập chỉ được chứa chữ cái, số và dấu gạch dưới (_)' })
   username: string;
 
-  @IsEmail()
-  @MaxLength(255)
+  @IsEmail({}, { message: 'Email không đúng định dạng' })
+  @MaxLength(255, { message: 'Email không được vượt quá 255 ký tự' })
   email: string;
 
   @IsString()
-  @IsNotEmpty()
-  @MaxLength(100)
+  @IsNotEmpty({ message: 'Họ và tên không được để trống' })
+  @Length(2, 100, { message: 'Họ và tên phải có độ dài từ 2 đến 100 ký tự' })
   fullName: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsNotEmpty({ message: 'Mật khẩu không được để trống' })
   password: string;
 
   @IsOptional()
@@ -37,7 +40,7 @@ export class CreateUserDto {
   gender?: Gender;
 
   @IsOptional()
-  @IsDateString()
+  @IsDateString({}, { message: 'Ngày tháng năm sinh không đúng định dạng' })
   dateOfBirth?: string | null;
 
   @IsOptional()

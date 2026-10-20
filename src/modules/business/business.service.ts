@@ -8,6 +8,8 @@ import { Repository } from 'typeorm';
 import { Business } from './entities/business.entity.js';
 import { BusinessType } from '../business-types/entities/business-type.entity.js';
 import { BusinessIndustry } from '../business-industries/entities/business-industry.entity.js';
+import { User, UserRole } from '../users/user.entity.js';
+import * as bcrypt from 'bcrypt';
 import { CreateBusinessDto } from './dto/create-business.dto.js';
 import { UpdateBusinessDto } from './dto/update-business.dto.js';
 import { QueryBusinessDto } from './dto/query-business.dto.js';
@@ -24,6 +26,9 @@ export class BusinessService {
 
     @InjectRepository(BusinessIndustry)
     private readonly businessIndustryRepository: Repository<BusinessIndustry>,
+
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
   ) {}
 
   // 1. POST /business: Tạo mới doanh nghiệp
@@ -90,6 +95,40 @@ export class BusinessService {
     });
 
     const saved = await this.businessRepository.save(business);
+
+    // Tự động tạo tài khoản đăng nhập cho doanh nghiệp với username là taxCode và password mặc định 12345678
+    try {
+      const defaultPassword = '12345678';
+      const passwordHash = await bcrypt.hash(defaultPassword, 12);
+
+      const existingUser = await this.userRepository.findOne({
+        where: [{ username: taxCode }, { email: business.email }],
+      });
+
+      if (!existingUser) {
+        const user = this.userRepository.create({
+          username: taxCode,
+          email: business.email,
+          passwordHash,
+          fullName: business.name,
+          role: UserRole.DOANH_NGHIEP,
+          businessId: saved.id,
+          isActive: business.isActive ?? true,
+          province: business.registeredProvince,
+          district: business.registeredDistrict,
+          streetAddress: business.address,
+        });
+        await this.userRepository.save(user);
+      } else {
+        existingUser.businessId = saved.id;
+        existingUser.role = UserRole.DOANH_NGHIEP;
+        existingUser.passwordHash = passwordHash;
+        await this.userRepository.save(existingUser);
+      }
+    } catch (userErr) {
+      console.error('Lỗi khi tự động tạo tài khoản cho doanh nghiệp:', userErr);
+    }
+
     return this.findOne(saved.id);
   }
 

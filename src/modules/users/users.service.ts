@@ -115,15 +115,25 @@ export class UsersService {
         });
 
         if (existingEmailUser) {
-            throw Response.errorBad(Response.EXISTED('Email'));
+            throw Response.errorBad('Email này đã được sử dụng bởi tài khoản khác');
         }
 
+        const cleanUsername = dto.username.trim();
         const existingUsernameUser = await this.userRepository.findOne({
-            where: { username: dto.username },
+            where: { username: cleanUsername },
         });
         
         if (existingUsernameUser) {
-            throw Response.errorBad(Response.EXISTED('Username'));
+            throw Response.errorBad('Tên đăng nhập này đã tồn tại trong hệ thống');
+        }
+
+        if (dto.dateOfBirth) {
+            const dob = new Date(dto.dateOfBirth);
+            const today = new Date();
+            today.setHours(23, 59, 59, 999);
+            if (dob > today) {
+                throw Response.errorBad('Ngày tháng năm sinh không được lớn hơn ngày hiện tại');
+            }
         }
 
         // 2. Mã hóa mật khẩu
