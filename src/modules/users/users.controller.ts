@@ -28,6 +28,7 @@ import { VerifyEmailChangeDto } from './dto/verify-email-change.dto.js';
 import { ChangeEmailDto } from './dto/change-email.dto.js';
 import { PaginationDto } from '../../commons/baseDto/pagination.dto.js';
 import { CreateUserDto } from './dto/create-user.dto.js';
+import Response from '../../commons/response.js';
 
 interface AuthenticatedRequest extends Request {
     user: {
@@ -103,12 +104,19 @@ export class UsersController {
     async uploadAvatar(
         @Req() req: AuthenticatedRequest,
         @UploadedFile() file?: Express.Multer.File,
+        @Body('userId') targetUserId?: string,
     ) {
         if (!file) {
             throw new BadRequestException('Không tìm thấy file ảnh được tải lên');
         }
         const avatarUrl = `/uploads/avatars/${file.filename}`;
-        return this.usersService.updateAvatar(req.user.userId, avatarUrl);
+        if (targetUserId) {
+            return this.usersService.updateAvatar(targetUserId, avatarUrl);
+        }
+        return Response.get({
+            message: 'Tải ảnh lên thành công',
+            avatar: avatarUrl,
+        });
     }
 
     @UseGuards(JwtAuthGuard)

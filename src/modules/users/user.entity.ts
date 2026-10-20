@@ -114,6 +114,12 @@ export class User {
   @Column({ type: 'varchar', length: 500, nullable: true })
   avatar: string | null;
 
+  @Column({ name: 'is_active', type: 'boolean', default: true })
+  isActive: boolean;
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  position: string | null;
+
   @Column({
     type: 'enum',
     enum: UserRole,

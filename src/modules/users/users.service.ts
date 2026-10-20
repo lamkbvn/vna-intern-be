@@ -34,6 +34,8 @@ export class UsersService {
                 district: true,
                 streetAddress: true,
                 avatar: true,
+                position: true,
+                isActive: true,
                 role: true,
                 businessId: true,
                 createdAt: true,
@@ -64,6 +66,8 @@ export class UsersService {
                 district: true,
                 streetAddress: true,
                 avatar: true,
+                position: true,
+                isActive: true,
                 role: true,
                 businessId: true,
                 createdAt: true,
@@ -136,6 +140,9 @@ export class UsersService {
             province: dto.province,
             district: dto.district,
             streetAddress: dto.streetAddress,
+            avatar: dto.avatar || null,
+            position: dto.position || null,
+            isActive: dto.isActive !== undefined ? dto.isActive : true,
             role: dto.role || UserRole.DOANH_NGHIEP,
         });
 
@@ -277,6 +284,14 @@ export class UsersService {
             user.avatar = dto.avatar;
         }
 
+        if (dto.position !== undefined) {
+            user.position = dto.position;
+        }
+
+        if (dto.isActive !== undefined) {
+            user.isActive = dto.isActive;
+        }
+
         const updatedUser = await this.userRepository.save(user);
 
         return Response.get({
@@ -290,6 +305,8 @@ export class UsersService {
             district: updatedUser.district,
             streetAddress: updatedUser.streetAddress,
             avatar: updatedUser.avatar,
+            position: updatedUser.position,
+            isActive: updatedUser.isActive,
             role: updatedUser.role,
             businessId: updatedUser.businessId,
             createdAt: updatedUser.createdAt,
@@ -333,6 +350,8 @@ export class UsersService {
             district: user.district,
             streetAddress: user.streetAddress,
             avatar: user.avatar,
+            position: user.position,
+            isActive: user.isActive,
             role: user.role,
             businessId: user.businessId,
             createdAt: user.createdAt,
