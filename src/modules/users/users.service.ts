@@ -22,7 +22,7 @@ export class UsersService {
 
     async findProfileById(id: string) {
         return this.userRepository.findOne({
-            where: { id },
+            where: { isDeleted: false, id },
             select: {
                 id: true,
                 username: true,
@@ -46,7 +46,9 @@ export class UsersService {
 
 
     async findAll(): Promise<User[]> {
-        return await this.userRepository.find();
+        return await this.userRepository.find({
+            where: { isDeleted: false }
+        });
     }
 
     async findAllByPage(pageNumber: number, pageSize: number) {
@@ -55,6 +57,7 @@ export class UsersService {
         pageSize = Math.min(100, Math.max(1, Math.floor(pageSize)));
 
         const users = await this.userRepository.find({
+            where: { isDeleted: false },
             select: {
                 id: true,
                 username: true,
@@ -90,13 +93,13 @@ export class UsersService {
 
     async findByEmail(email: string): Promise<User | null> {
         return await this.userRepository.findOne({
-            where: { email },
+            where: { isDeleted: false,email },
         });
     }
 
     async findByEmailWithPassword(email: string) {
         return this.userRepository.findOne({
-            where: { email },
+            where: {isDeleted: false, email },
             select: {
                 id: true,
                 email: true,
@@ -111,7 +114,7 @@ export class UsersService {
     async createUser(dto: CreateUserDto) {
         // 1. Kiểm tra email đã tồn tại
         const existingEmailUser = await this.userRepository.findOne({
-            where: { email: dto.email.toLowerCase().trim() },
+            where: {isDeleted: false , email: dto.email.toLowerCase().trim() },
         });
 
         if (existingEmailUser) {
@@ -120,7 +123,7 @@ export class UsersService {
 
         const cleanUsername = dto.username.trim();
         const existingUsernameUser = await this.userRepository.findOne({
-            where: { username: cleanUsername },
+            where: { isDeleted: false, username: cleanUsername },
         });
         
         if (existingUsernameUser) {
@@ -174,7 +177,7 @@ export class UsersService {
 
     async findByUsernameWithPassword(username: string) {
         return this.userRepository.findOne({
-            where: { username },
+            where: { isDeleted: false, username },
             select: {
                 id: true,
                 username: true,
@@ -190,7 +193,7 @@ export class UsersService {
 
     async findByIdWithPassword(id: string) {
         return this.userRepository.findOne({
-            where: { id },
+            where: { isDeleted: false, id },
             select: {
                 id: true,
                 username: true,
@@ -213,7 +216,7 @@ export class UsersService {
 
     async findByIdWithRefreshToken(id: string) {
         return this.userRepository.findOne({
-            where: { id },
+            where: { isDeleted: false, id },
             select: ['id', 'username', 'role', 'businessId', 'isActive', 'refreshTokenHash', 'refreshTokenExpiresAt'],
         });
     }
@@ -332,7 +335,7 @@ export class UsersService {
 
     async updateAvatar(userId: string, avatarUrl: string | null) {
         const user = await this.userRepository.findOne({
-            where: { id: userId },
+            where: {isDeleted: false, id: userId },
         });
 
         if (!user) {
@@ -377,7 +380,7 @@ export class UsersService {
 
     async requestEmailChange(userId: string) {
         const user = await this.userRepository.findOne({
-            where: { id: userId },
+            where: { isDeleted: false, id: userId },
         });
 
         if (!user) {
@@ -421,7 +424,7 @@ export class UsersService {
     async clearResetPasswordOtp(email: string): Promise<void> {
 
         const user = await this.userRepository.findOne({
-            where: { email },
+            where: { isDeleted: false, email },
         });
 
         if (!user) {
@@ -491,7 +494,7 @@ export class UsersService {
 
     async changeEmail(userId: string, newEmail: string) {
         const user = await this.userRepository.findOne({
-            where: { id: userId },
+            where: { isDeleted: false, id: userId },
         });
 
         if (!user) {
@@ -547,6 +550,23 @@ export class UsersService {
         return Response.get({
             message: 'Đổi email thành công',
             email: normalizedEmail,
+        });
+    }
+
+    async deleteUser(id: string) {
+        const user = await this.userRepository.findOne({
+            where: { isDeleted: false, id: id },
+        });
+
+        if (!user) {
+            throw Response.errorNotFound(Response.NOT_FOUND('User'));
+        }
+
+        user.isDeleted = true;
+        await this.userRepository.save(user);
+
+        return Response.get({
+            message: 'Xóa người dùng thành công',
         });
     }
 

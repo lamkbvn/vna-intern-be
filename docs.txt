@@ -9,3 +9,4 @@ npm run seed -> chạy dữ liệu mẫu vào database
 vào https://myaccount.google.com/apppasswords 
 Đặt tên ứng dụng (ví dụ: VNA-Backend) rồi bấm Tạo.
 Google sẽ cấp chuỗi mật khẩu (dạng xxxx xxxx xxxx xxxx).
+
