@@ -264,6 +264,19 @@ export class UsersService {
             throw Response.errorNotFound(Response.NOT_FOUND('User'));
         }
 
+        if (dto.email !== undefined && dto.email.trim()) {
+            const normalizedEmail = dto.email.trim().toLowerCase();
+            if (normalizedEmail !== user.email.toLowerCase()) {
+                const existingUser = await this.userRepository.findOne({
+                    where: { email: normalizedEmail },
+                });
+                if (existingUser && existingUser.id !== userId) {
+                    throw new ConflictException('Email đã được sử dụng bởi tài khoản khác');
+                }
+                user.email = normalizedEmail;
+            }
+        }
+
         if (dto.fullName !== undefined) {
             user.fullName = dto.fullName;
         }

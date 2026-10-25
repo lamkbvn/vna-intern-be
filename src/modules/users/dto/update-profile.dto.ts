@@ -1,5 +1,6 @@
 import {
   IsDateString,
+  IsEmail,
   IsEnum,
   IsOptional,
   IsString,
@@ -11,6 +12,11 @@ export class UpdateProfileDto {
   @IsOptional()
   @IsEnum(UserRole)
   role?: UserRole;
+
+  @IsOptional()
+  @IsEmail({}, { message: 'Email không đúng định dạng' })
+  @MaxLength(255, { message: 'Email không được vượt quá 255 ký tự' })
+  email?: string;
 
   @IsOptional()
   @IsString()
