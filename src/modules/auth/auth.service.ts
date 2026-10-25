@@ -25,12 +25,16 @@ export class AuthService {
   ) {}
 
   async login(username: string, password: string) {
+    if (!username?.trim() || !password) {
+      throw new BadRequestException('Vui lòng nhập đầy đủ thông tin');
+    }
+
     // 1. Tìm user theo username
     const user =
       await this.usersService.findByUsernameWithPassword(username);
 
     if (!user) {
-      throw new UnauthorizedException('Tên tài khoản hoặc mật khẩu không chính xác');
+      throw new UnauthorizedException('Tài khoản hoặc mật khẩu không đúng. Xin vui lòng thử lại');
     }
 
     // 2. Kiểm tra trạng thái tài khoản
@@ -45,7 +49,7 @@ export class AuthService {
     );
 
     if (!isPasswordValid) {
-      throw new UnauthorizedException('Tên tài khoản hoặc mật khẩu không chính xác');
+      throw new UnauthorizedException('Tài khoản hoặc mật khẩu không đúng. Xin vui lòng thử lại');
     }
 
     // 3. Tạo payload dùng chung (có đầy đủ role và businessId)
