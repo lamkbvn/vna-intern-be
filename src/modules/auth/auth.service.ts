@@ -235,7 +235,7 @@ export class AuthService {
     // Kiểm tra định dạng email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!email || !emailRegex.test(email.trim())) {
-      throw new BadRequestException('email phải đúng định dạng');
+      throw new BadRequestException('Vui lòng nhập đúng định dạng email, Định dạng đúng ... @...');
     }
 
     const trimmedEmail = email.trim().toLowerCase();
@@ -243,7 +243,7 @@ export class AuthService {
     // Kiểm tra email có tồn tại trong hệ thống không
     const user = await this.usersService.findByEmail(trimmedEmail);
     if (!user) {
-      throw new BadRequestException('email này không tồn tại');
+      throw new BadRequestException('Email chưa đăng ký trong hệ thống. Xin vui lòng thử lại sau');
     }
 
     // Sinh mã OTP ngẫu nhiên 6 chữ số
@@ -269,8 +269,7 @@ export class AuthService {
     });
 
     return {
-      message:
-        'Mã OTP đã được gửi về email của bạn, vui lòng kiểm tra email để tiếp tục bước tiếp theo.',
+      message: 'Gửi email thành công',
       email: user.email,
       expiresIn: '5 phút',
     };

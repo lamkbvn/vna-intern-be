@@ -242,10 +242,27 @@ export class UsersController {
         };
     }
     @UseGuards(JwtAuthGuard)
+    @Patch('delete')
+    async deleteUsersBatch(
+        @Body() body: { ids?: string[]; accountIds?: string[]; userIds?: string[] }
+    ) {
+        const ids = body.ids || body.accountIds || body.userIds || [];
+        return await this.usersService.deleteUsers(ids);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Delete('batch')
+    async deleteUsersBatchDelete(
+        @Body() body: { ids?: string[]; accountIds?: string[]; userIds?: string[] }
+    ) {
+        const ids = body.ids || body.accountIds || body.userIds || [];
+        return await this.usersService.deleteUsers(ids);
+    }
+
+    @UseGuards(JwtAuthGuard)
     @Delete(':id')
     async deleteUser(@Param('id') id: string) {
         return await this.usersService.deleteUser(id);
-        
     }
 
 }

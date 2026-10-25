@@ -1,6 +1,6 @@
 import { ConflictException, Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, In } from 'typeorm';
 import { User, UserRole } from './user.entity.js';
 import { UpdateProfileDto } from './dto/update-profile.dto.js';
 import Response, { ResponseData } from '../../commons/response.js';
@@ -580,6 +580,26 @@ export class UsersService {
 
         return Response.get({
             message: 'Xóa người dùng thành công',
+        });
+    }
+
+    async deleteUsers(ids: string[]) {
+        if (!ids || ids.length === 0) {
+            throw new BadRequestException('Danh sách ID người dùng không được để trống');
+        }
+
+        const validIds = ids.map((id) => String(id).trim()).filter(Boolean);
+        if (validIds.length === 0) {
+            throw new BadRequestException('Danh sách ID không hợp lệ');
+        }
+
+        await this.userRepository.update(
+            { id: In(validIds), isDeleted: false },
+            { isDeleted: true }
+        );
+
+        return Response.get({
+            message: `Xóa thành công ${validIds.length} người dùng`,
         });
     }
 
