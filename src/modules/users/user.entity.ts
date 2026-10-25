@@ -139,4 +139,7 @@ export class User {
 
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
+
+  @Column({name : 'is_deleted', type: 'boolean', default: false})
+  isDeleted: boolean;
 }

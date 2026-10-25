@@ -241,5 +241,11 @@ export class UsersController {
             message: 'Đã xóa OTP thay đổi email',
         };
     }
+    @UseGuards(JwtAuthGuard)
+    @Delete(':id')
+    async deleteUser(@Param('id') id: string) {
+        return await this.usersService.deleteUser(id);
+        
+    }
 
 }
