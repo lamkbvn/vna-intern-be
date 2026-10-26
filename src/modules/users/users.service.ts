@@ -139,6 +139,13 @@ export class UsersService {
             }
         }
 
+        if (dto.province && !dto.district) {
+            throw Response.errorBad('Vui lòng chọn phường/xã khi đã chọn tỉnh/thành phố');
+        }
+        if (!dto.province && dto.district) {
+            throw Response.errorBad('Vui lòng chọn tỉnh/thành phố khi đã chọn phường/xã');
+        }
+
         // 2. Mã hóa mật khẩu
         const passwordHash = await bcrypt.hash(dto.password, 12);
 
@@ -290,6 +297,15 @@ export class UsersService {
 
         if (dto.gender !== undefined) {
             user.gender = dto.gender;
+        }
+
+        const finalProvince = dto.province !== undefined ? dto.province : user.province;
+        const finalDistrict = dto.district !== undefined ? dto.district : user.district;
+        if (finalProvince && !finalDistrict) {
+            throw Response.errorBad('Vui lòng chọn phường/xã khi đã chọn tỉnh/thành phố');
+        }
+        if (!finalProvince && finalDistrict) {
+            throw Response.errorBad('Vui lòng chọn tỉnh/thành phố khi đã chọn phường/xã');
         }
 
         if (dto.province !== undefined) {

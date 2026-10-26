@@ -2,6 +2,7 @@ import {
   IsDateString,
   IsEmail,
   IsEnum,
+  Matches,
   IsOptional,
   IsString,
   MaxLength,
@@ -21,6 +22,7 @@ export class UpdateProfileDto {
   @IsOptional()
   @IsString()
   @MaxLength(100)
+  @Matches(/^[\p{L}\s]+$/u, { message: 'Họ và tên chỉ được chứa chữ cái, không chứa số hoặc ký tự đặc biệt' })
   fullName?: string;
 
   @IsOptional()
