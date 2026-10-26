@@ -22,11 +22,11 @@ export class Business {
   @Column({ type: 'varchar', length: 255 })
   name: string;
 
-  // Mã số thuế (10 chữ số, unique)
+  // Mã số thuế (10 chữ số hoặc 13 ký tự, unique)
   @Column({
     name: 'tax_code',
     type: 'varchar',
-    length: 10,
+    length: 20,
     unique: true,
   })
   taxCode: string;

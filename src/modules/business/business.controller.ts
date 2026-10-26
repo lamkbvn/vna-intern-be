@@ -49,4 +49,13 @@ export class BusinessController {
   remove(@Param('id') id: string) {
     return this.businessService.remove(id);
   }
+
+  // 6. PATCH /business/:id/reset-password: Khởi tạo mật khẩu cho tài khoản doanh nghiệp
+  @Patch(':id/reset-password')
+  resetPassword(
+    @Param('id') id: string,
+    @Body() body: { newPassword?: string; password?: string },
+  ) {
+    return this.businessService.resetPassword(id, body.newPassword || body.password);
+  }
 }

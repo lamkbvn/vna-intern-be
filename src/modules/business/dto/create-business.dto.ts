@@ -17,11 +17,11 @@ export class CreateBusinessDto {
   @MaxLength(255)
   name: string;
 
-  // Mã số thuế (bắt buộc, đúng 10 chữ số, unique)
+  // Mã số thuế (bắt buộc: 10 chữ số hoặc 13 ký tự dạng 10 số - 3 số, unique)
   @IsString()
-  @IsNotEmpty()
-  @Matches(/^\d{10}$/, {
-    message: 'Mã số thuế phải bao gồm đúng 10 chữ số.',
+  @IsNotEmpty({ message: 'Mã số thuế không được để trống.' })
+  @Matches(/^(\d{10}|\d{10}-\d{3})$/, {
+    message: 'Mã số thuế không hợp lệ, phải gồm 10 chữ số hoặc 13 ký tự (Ví dụ: 0109876543 hoặc 0109876543-001).',
   })
   taxCode: string;
 

@@ -35,10 +35,10 @@ export class BusinessService {
   async create(dto: CreateBusinessDto) {
     const taxCode = dto.taxCode.trim();
 
-    // Ràng buộc mã số thuế đúng 10 chữ số
-    if (!/^\d{10}$/.test(taxCode)) {
+    // Ràng buộc mã số thuế: 10 chữ số hoặc 13 ký tự (không được toàn số 0)
+    if (!/^(\d{10}|\d{10}-\d{3})$/.test(taxCode) || /^0{10}(-0{3})?$/.test(taxCode)) {
       throw new BadRequestException(
-        'Mã số thuế phải bao gồm đúng 10 chữ số.',
+        'Mã số thuế không hợp lệ, phải gồm 10 chữ số hoặc 13 ký tự (Ví dụ: 0109876543 hoặc 0109876543-001).',
       );
     }
 
@@ -233,10 +233,10 @@ export class BusinessService {
     if (dto.taxCode && dto.taxCode.trim() !== business.taxCode) {
       const newTaxCode = dto.taxCode.trim();
 
-      // Ràng buộc mã số thuế đúng 10 chữ số
-      if (!/^\d{10}$/.test(newTaxCode)) {
+      // Ràng buộc mã số thuế: 10 chữ số hoặc 13 ký tự (không được toàn số 0)
+      if (!/^(\d{10}|\d{10}-\d{3})$/.test(newTaxCode) || /^0{10}(-0{3})?$/.test(newTaxCode)) {
         throw new BadRequestException(
-          'Mã số thuế phải bao gồm đúng 10 chữ số.',
+          'Mã số thuế không hợp lệ, phải gồm 10 chữ số hoặc 13 ký tự (Ví dụ: 0109876543 hoặc 0109876543-001).',
         );
       }
 
@@ -334,6 +334,57 @@ export class BusinessService {
     return Response.get({
       message: `Đã xóa thành công doanh nghiệp "${business.name}" (${business.taxCode})`,
       id: business.id,
+    });
+  }
+
+  // 6. PATCH /business/:id/reset-password: Khởi tạo mật khẩu cho tài khoản doanh nghiệp
+  async resetPassword(identifier: string, newPassword?: string) {
+    if (!newPassword || !newPassword.trim()) {
+      throw new BadRequestException('Vui lòng nhập mật khẩu mới');
+    }
+
+    const where = this.getWhereByIdOrTaxCode(identifier);
+    const business = await this.businessRepository.findOne({
+      where,
+    });
+
+    if (!business) {
+      throw new NotFoundException(
+        `Không tìm thấy doanh nghiệp với mã hoặc id: "${identifier}"`,
+      );
+    }
+
+    const passwordHash = await bcrypt.hash(newPassword.trim(), 12);
+
+    let user = await this.userRepository.findOne({
+      where: [{ username: business.taxCode }, { businessId: business.id }],
+    });
+
+    if (user) {
+      user.passwordHash = passwordHash;
+      user.refreshTokenHash = null;
+      user.refreshTokenExpiresAt = null;
+      user.resetPasswordOtpHash = null;
+      user.resetPasswordOtpExpiresAt = null;
+      await this.userRepository.save(user);
+    } else {
+      user = this.userRepository.create({
+        username: business.taxCode,
+        email: business.email,
+        passwordHash,
+        fullName: business.name,
+        role: UserRole.DOANH_NGHIEP,
+        businessId: business.id,
+        isActive: business.isActive ?? true,
+        province: business.registeredProvince,
+        district: business.registeredDistrict,
+        streetAddress: business.address,
+      });
+      await this.userRepository.save(user);
+    }
+
+    return Response.get({
+      message: `Khởi tạo mật khẩu cho tài khoản ${business.taxCode} thành công`,
     });
   }
 }

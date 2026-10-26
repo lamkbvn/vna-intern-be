@@ -31,6 +31,19 @@ export class UploadController {
         },
       }),
       limits: { fileSize: 10 * 1024 * 1024 }, // Tối đa 10MB
+      fileFilter: (_req, file, cb) => {
+        const allowedExtensions = ['.png', '.jpg', '.jpeg', '.webp', '.gif', '.doc', '.docx'];
+        const ext = extname(file.originalname).toLowerCase();
+        if (!allowedExtensions.includes(ext)) {
+          return cb(
+            new BadRequestException(
+              'Chỉ cho phép tải lên file hình ảnh (.png, .jpg, .jpeg, .webp) và tài liệu Word (.doc, .docx)',
+            ),
+            false,
+          );
+        }
+        cb(null, true);
+      },
     }),
   )
   uploadFile(@UploadedFile() file?: Express.Multer.File) {
@@ -47,4 +60,3 @@ export class UploadController {
     });
   }
 }
-
