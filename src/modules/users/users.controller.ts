@@ -24,6 +24,9 @@ import { UsersService } from './users.service.js';
 import { AuthService } from '../auth/auth.service.js';
 import { UpdateProfileDto } from './dto/update-profile.dto.js';
 import { JwtAuthGuard } from '../../commons/guard/jwt-auth.guard.js';
+import { RolesGuard } from '../../commons/guard/roles.guard.js';
+import { Roles } from '../../commons/decorators/roles.decorator.js';
+import { UserRole } from './user.entity.js';
 import { VerifyEmailChangeDto } from './dto/verify-email-change.dto.js';
 import { ChangeEmailDto } from './dto/change-email.dto.js';
 import { PaginationDto } from '../../commons/baseDto/pagination.dto.js';
@@ -44,7 +47,8 @@ export class UsersController {
         private readonly usersService: UsersService
     ) { }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(UserRole.ADMIN, UserRole.MANAGER)
     @Get()
     async findAllByPage(@Query() paginationDto: PaginationDto) {
         return this.usersService.findAllByPage(
@@ -120,7 +124,8 @@ export class UsersController {
         });
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(UserRole.ADMIN)
     @Post('create')
     async createUser(@Body() dto: CreateUserDto) {
         return this.usersService.createUser(dto);
@@ -134,13 +139,20 @@ export class UsersController {
         @Req() req: AuthenticatedRequest,
         @Body() dto: UpdateProfileDto,
     ) {
+        // Chỉ cho phép đổi vai trò nếu tài khoản đăng nhập là ADMIN
+        let safeDto = dto;
+        if ((req.user as any)?.role !== UserRole.ADMIN) {
+            const { role: _role, ...rest } = dto;
+            safeDto = rest;
+        }
         return this.usersService.updateProfile(
             req.user.userId,
-            dto,
+            safeDto,
         );
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(UserRole.ADMIN)
     @Patch('profile/:id')
     async updateProfileById(
         @Param('id') id: string,
@@ -152,7 +164,8 @@ export class UsersController {
         );
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(UserRole.ADMIN)
     @Patch(':id/reset-password')
     async resetUserPassword(
         @Param('id') id: string,
@@ -241,7 +254,8 @@ export class UsersController {
             message: 'Đã xóa OTP thay đổi email',
         };
     }
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(UserRole.ADMIN)
     @Patch('delete')
     async deleteUsersBatch(
         @Body() body: { ids?: string[]; accountIds?: string[]; userIds?: string[] }
@@ -250,7 +264,8 @@ export class UsersController {
         return await this.usersService.deleteUsers(ids);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(UserRole.ADMIN)
     @Delete('batch')
     async deleteUsersBatchDelete(
         @Body() body: { ids?: string[]; accountIds?: string[]; userIds?: string[] }
@@ -259,7 +274,8 @@ export class UsersController {
         return await this.usersService.deleteUsers(ids);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(UserRole.ADMIN)
     @Delete(':id')
     async deleteUser(@Param('id') id: string) {
         return await this.usersService.deleteUser(id);

@@ -29,7 +29,7 @@ export class CreateUserDto {
   @IsString()
   @IsNotEmpty({ message: 'Họ và tên không được để trống' })
   @Length(2, 100, { message: 'Họ và tên phải có độ dài từ 2 đến 100 ký tự' })
-  @Matches(/^[\p{L}\s]+$/u, { message: 'Họ và tên chỉ được chứa chữ cái, không chứa số hoặc ký tự đặc biệt' })
+  @Matches(/^[\p{L}\p{M}\s]+$/u, { message: 'Họ và tên chỉ được chứa chữ cái, không chứa số hoặc ký tự đặc biệt' })
   fullName: string;
 
   @IsString()

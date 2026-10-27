@@ -17,6 +17,8 @@ export enum Gender {
 export enum UserRole {
   ADMIN = 'ADMIN',
   DOANH_NGHIEP = 'DOANH_NGHIEP',
+  MANAGER = 'MANAGER',
+  EMPLOYEE = 'EMPLOYEE',
 }
 
 @Entity('users')
