@@ -224,7 +224,6 @@ export class UsersController {
     }
 
     // Xóa OTP đặt lại mật khẩu
-    @UseGuards(JwtAuthGuard)
     @Delete('otp/reset-password')
     async clearResetPasswordOtp(
         @Body() body: { email: string; },
