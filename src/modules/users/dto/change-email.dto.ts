@@ -1,6 +1,6 @@
 import { IsEmail } from 'class-validator';
 
 export class ChangeEmailDto {
-  @IsEmail()
+  @IsEmail({}, { message: 'Email không hợp lệ , vui lòng kiểm tra lại dữ liệu' })
   newEmail: string;
 }

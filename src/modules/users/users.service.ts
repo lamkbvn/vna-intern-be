@@ -509,7 +509,7 @@ export class UsersService {
         );
 
         if (!isValid) {
-            throw new UnauthorizedException('OTP không chính xác');
+            throw new BadRequestException('Mã OTP không chính xác, vui lòng kiểm tra lại');
         }
 
         await this.userRepository.update(userId, {
@@ -544,7 +544,7 @@ export class UsersService {
 
         if (normalizedEmail === user.email.toLowerCase()) {
             throw new BadRequestException(
-                'Email mới phải khác email hiện tại',
+                'Email mới không được trùng email hiện tại , vui lòng kiểm tra lại dữ liệu',
             );
         }
 
@@ -553,7 +553,7 @@ export class UsersService {
         });
 
         if (existingUser) {
-            throw new ConflictException('Email mới đã được sử dụng');
+            throw new ConflictException('Email mới đã tồn tại trên hệ thống, vui lòng kiểm tra lại dữ liệu');
         }
 
         // Cập nhật có điều kiện để không thể dùng lại trạng thái xác minh.
@@ -574,6 +574,17 @@ export class UsersService {
             throw new BadRequestException(
                 'Yêu cầu đổi email không còn hợp lệ. Vui lòng xác minh lại OTP.',
             );
+        }
+
+        if (user.businessId) {
+            try {
+                await this.userRepository.manager.query(
+                    'UPDATE businesses SET email = $1 WHERE id = $2',
+                    [normalizedEmail, user.businessId],
+                );
+            } catch (syncErr) {
+                console.warn('Không thể đồng bộ email sang bảng businesses:', syncErr);
+            }
         }
 
         return Response.get({

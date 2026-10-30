@@ -39,14 +39,14 @@ export class BusinessController {
 
   // 3. GET /business/:id: Chi tiết doanh nghiệp
   @Get(':id')
-  @Roles(UserRole.ADMIN, UserRole.MANAGER, UserRole.EMPLOYEE)
+  @Roles(UserRole.ADMIN, UserRole.MANAGER, UserRole.EMPLOYEE, UserRole.DOANH_NGHIEP)
   findOne(@Param('id') id: string) {
     return this.businessService.findOne(id);
   }
 
   // 4. PATCH /business/:id: Cập nhật thông tin doanh nghiệp
   @Patch(':id')
-  @Roles(UserRole.ADMIN, UserRole.MANAGER, UserRole.EMPLOYEE)
+  @Roles(UserRole.ADMIN, UserRole.MANAGER, UserRole.EMPLOYEE, UserRole.DOANH_NGHIEP)
   update(
     @Param('id') id: string,
     @Body() updateBusinessDto: UpdateBusinessDto,
