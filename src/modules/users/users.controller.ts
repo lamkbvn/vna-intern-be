@@ -57,6 +57,17 @@ export class UsersController {
         );
     }
 
+    // GET /users/deleted
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(UserRole.ADMIN)
+    @Get('deleted')
+    async getDeletedUsers(@Query() paginationDto: PaginationDto) {
+        return this.usersService.getDeletedUsers(
+            paginationDto.pageNumber ?? 1,
+            paginationDto.pageSize ?? 100,
+        );
+    }
+
     // GET /users/profile
     // Lấy thông tin người dùng đang đăng nhập 
     @UseGuards(JwtAuthGuard)
@@ -271,6 +282,40 @@ export class UsersController {
     ) {
         const ids = body.ids || body.accountIds || body.userIds || [];
         return await this.usersService.deleteUsers(ids);
+    }
+
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(UserRole.ADMIN)
+    @Patch('restore-batch')
+    async restoreUsersBatch(
+        @Body() body: { ids?: string[]; accountIds?: string[]; userIds?: string[] }
+    ) {
+        const ids = body.ids || body.accountIds || body.userIds || [];
+        return await this.usersService.restoreUsers(ids);
+    }
+
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(UserRole.ADMIN)
+    @Patch(':id/restore')
+    async restoreUser(@Param('id') id: string) {
+        return await this.usersService.restoreUser(id);
+    }
+
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(UserRole.ADMIN)
+    @Delete('permanent-batch')
+    async permanentDeleteUsersBatch(
+        @Body() body: { ids?: string[]; accountIds?: string[]; userIds?: string[] }
+    ) {
+        const ids = body.ids || body.accountIds || body.userIds || [];
+        return await this.usersService.permanentDeleteUsers(ids);
+    }
+
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(UserRole.ADMIN)
+    @Delete(':id/permanent')
+    async permanentDeleteUser(@Param('id') id: string) {
+        return await this.usersService.permanentDeleteUser(id);
     }
 
     @UseGuards(JwtAuthGuard, RolesGuard)
