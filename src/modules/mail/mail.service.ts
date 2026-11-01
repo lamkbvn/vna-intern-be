@@ -150,6 +150,8 @@ Nếu bạn không yêu cầu khôi phục mật khẩu, vui lòng bỏ qua emai
     }
   }
 
+  
+
   async sendEmailChangeOtp(
     to: string,
     otp: string,
@@ -157,7 +159,7 @@ Nếu bạn không yêu cầu khôi phục mật khẩu, vui lòng bỏ qua emai
     const from = this.getFromAddress();
     const logoConfig = this.getLogoConfig();
 
-    const textContent = `Mã xác nhận đổi email của bạn là: ${otp}
+    const textContent = `Mã xác thực email của bạn là: ${otp}
 Mã có hiệu lực trong 10 phút.
 Không chia sẻ mã này với bất kỳ ai, kể cả nhân viên hỗ trợ.
 Nếu bạn không yêu cầu đổi email, hãy bỏ qua email này.`;
@@ -170,7 +172,7 @@ Nếu bạn không yêu cầu đổi email, hãy bỏ qua email này.`;
           <h1 style="font-size: 26px; font-weight: 700; margin: 0 0 24px 0; color: #000000; letter-spacing: -0.4px;">Xác nhận đổi email</h1>
           
           <p style="margin: 0 0 20px 0; font-size: 16px; line-height: 1.6; color: #111827;">
-            Bạn vừa yêu cầu thay đổi email liên kết với tài khoản. Dưới đây là mã OTP của bạn: <strong>${otp}</strong>
+            Bạn vừa yêu cầu xác thực email liên kết với tài khoản. Dưới đây là mã OTP của bạn: <strong>${otp}</strong>
           </p>
           
           <p style="margin: 0 0 16px 0; font-size: 16px; line-height: 1.6; color: #111827;">
@@ -182,14 +184,14 @@ Nếu bạn không yêu cầu đổi email, hãy bỏ qua email này.`;
           </p>
           
           <p style="margin: 0; font-size: 16px; line-height: 1.6; color: #111827;">
-            Nếu bạn không yêu cầu đổi email, vui lòng bỏ qua email này
+            Nếu bạn không yêu cầu xác thực email, vui lòng bỏ qua email này
           </p>
         </div>
       </div>
     `;
 
     this.logger.log(
-      `Gửi OTP đổi email tới: ${to} | Mã OTP: [ ${otp} ] (Hiệu lực: 10 phút)`,
+      `Gửi OTP xác thực email tới: ${to} | Mã OTP: [ ${otp} ] (Hiệu lực: 10 phút)`,
     );
 
     if (this.transporter) {
@@ -197,7 +199,7 @@ Nếu bạn không yêu cầu đổi email, hãy bỏ qua email này.`;
         await this.transporter.sendMail({
           from,
           to,
-          subject: '[Hệ thống] Mã OTP xác nhận đổi email',
+          subject: '[Hệ thống] Mã OTP xác thực email',
           text: textContent,
           html: htmlContent,
           attachments: logoConfig.attachments,
