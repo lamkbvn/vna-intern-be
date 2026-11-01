@@ -17,11 +17,31 @@ import { JwtAuthGuard } from '../../commons/guard/jwt-auth.guard.js';
 import { RolesGuard } from '../../commons/guard/roles.guard.js';
 import { Roles } from '../../commons/decorators/roles.decorator.js';
 import { UserRole } from '../users/user.entity.js';
+import { VerifyBusinessRegistrationOtpDto } from './dto/verify-business-registration-otp.dto.js';
 
 @Controller(['business', 'businesses'])
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class BusinessController {
   constructor(private readonly businessService: BusinessService) {}
+
+
+    // 1. POST /business/register-bussiness: đăng kí doanh nghiệp
+  @Post('register-bussiness')
+  @Roles(UserRole.ADMIN, UserRole.MANAGER, UserRole.EMPLOYEE)
+  register(@Body() createBusinessDto: CreateBusinessDto) {
+    return this.businessService.registerBusiness(createBusinessDto);
+  }
+
+  // 2. POST /business/verify-registration-otp: xác thực mã OTP đăng kí doanh nghiệp
+  @Post('verify-registration-otp')
+async verifyBusinessRegistrationOtp(
+  @Body() dto: VerifyBusinessRegistrationOtpDto,
+) {
+  return this.businessService.verifyBusinessRegistrationOtp(
+    dto.registrationRequestId,
+    dto.otp,
+  );
+}
 
   // 1. POST /business: Tạo mới doanh nghiệp
   @Post()

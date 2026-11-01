@@ -160,7 +160,7 @@ Nếu bạn không yêu cầu khôi phục mật khẩu, vui lòng bỏ qua emai
     const logoConfig = this.getLogoConfig();
 
     const textContent = `Mã xác thực email của bạn là: ${otp}
-Mã có hiệu lực trong 10 phút.
+Mã có hiệu lực trong 5 phút.
 Không chia sẻ mã này với bất kỳ ai, kể cả nhân viên hỗ trợ.
 Nếu bạn không yêu cầu đổi email, hãy bỏ qua email này.`;
 

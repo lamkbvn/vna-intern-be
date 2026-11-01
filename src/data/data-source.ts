@@ -4,6 +4,7 @@ import { User } from '../modules/users/user.entity.js';
 import { BusinessIndustry } from '../modules/business-industries/entities/business-industry.entity.js';
 import { BusinessType } from '../modules/business-types/entities/business-type.entity.js';
 import { Business } from '../modules/business/entities/business.entity.js';
+import { BusinessRegistrationRequest } from '../modules/business/entities/business-registration-request.entity.js';
 
 export default new DataSource({
   type: 'postgres',
@@ -14,7 +15,7 @@ export default new DataSource({
   database: process.env.DB_DATABASE,
 
   // Các entity của hệ thống
-  entities: [User, BusinessIndustry, BusinessType, Business],
+  entities: [User, BusinessIndustry, BusinessType, Business , BusinessRegistrationRequest],
   migrations: ['src/migrations/*.ts'],
 
   synchronize: false,

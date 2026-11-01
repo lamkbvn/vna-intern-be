@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
+  ServiceUnavailableException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -14,6 +15,9 @@ import { CreateBusinessDto } from './dto/create-business.dto.js';
 import { UpdateBusinessDto } from './dto/update-business.dto.js';
 import { QueryBusinessDto } from './dto/query-business.dto.js';
 import Response from '../../commons/response.js';
+import { BusinessRegistrationRequest, BusinessRegistrationStatus } from './entities/business-registration-request.entity.js';
+import { randomInt } from 'crypto';
+import { MailService } from '../mail/mail.service.js';
 
 @Injectable()
 export class BusinessService {
@@ -29,7 +33,196 @@ export class BusinessService {
 
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-  ) {}
+    private readonly mailService: MailService,
+
+    @InjectRepository(BusinessRegistrationRequest)
+    private readonly businessRegistrationRequestRepository: Repository<BusinessRegistrationRequest>,
+  ) { }
+
+  // Đăng kí doanh nghiệp
+  async registerBusiness(dto: CreateBusinessDto) {
+    const taxCode = dto.taxCode.trim();
+    const email = dto.email.trim().toLowerCase();
+
+    // 1. Kiểm tra mã số thuế
+    if (
+      !/^(\d{10}|\d{10}-\d{3})$/.test(taxCode) ||
+      /^0{10}(-0{3})?$/.test(taxCode)
+    ) {
+      throw new BadRequestException(
+        'Mã số thuế không hợp lệ, phải gồm 10 chữ số hoặc 13 ký tự.',
+      );
+    }
+
+    // 2. Kiểm tra mã số thuế đã tồn tại trong bảng businesses
+    const existingBusiness = await this.businessRepository.findOne({
+      where: { taxCode },
+    });
+
+    if (existingBusiness) {
+      throw new BadRequestException(
+        `Mã số thuế "${taxCode}" đã được đăng ký trong hệ thống.`,
+      );
+    }
+
+    // 3. Kiểm tra yêu cầu đăng ký đã tồn tại
+    let registration = await this.businessRegistrationRequestRepository.findOne({
+      where: { taxCode },
+    });
+
+    if (
+      registration &&
+      registration.status === BusinessRegistrationStatus.COMPLETED
+    ) {
+      throw new BadRequestException(
+        `Mã số thuế "${taxCode}" đã được đăng ký.`,
+      );
+    }
+
+    // 4. Kiểm tra loại hình kinh doanh
+    const businessType = await this.businessTypeRepository.findOne({
+      where: { id: dto.businessTypeId },
+    });
+
+    if (!businessType) {
+      throw new NotFoundException(
+        `Không tìm thấy loại hình kinh doanh với id: "${dto.businessTypeId}"`,
+      );
+    }
+
+    // 5. Kiểm tra ngành nghề kinh doanh
+    const businessIndustry = await this.businessIndustryRepository.findOne({
+      where: { id: dto.businessIndustryId },
+    });
+
+    if (!businessIndustry) {
+      throw new NotFoundException(
+        `Không tìm thấy ngành nghề kinh doanh với id: "${dto.businessIndustryId}"`,
+      );
+    }
+
+    // 6. Tạo OTP 6 chữ số
+    const otp = randomInt(100000, 1000000).toString();
+
+    // 7. Hash OTP
+    const otpHash = await bcrypt.hash(otp, 12);
+
+    // 8. Lưu thông tin vào business_registration_requests
+    if (!registration) {
+      registration = this.businessRegistrationRequestRepository.create();
+    }
+
+    Object.assign(registration, {
+      name: dto.name.trim(),
+      taxCode,
+      email,
+      address: dto.address?.trim() || null,
+      registeredDistrict: dto.registeredDistrict?.trim() || null,
+      registeredProvince: dto.registeredProvince?.trim() || null,
+      licenseDate: dto.licenseDate || null,
+      foreignName: dto.foreignName?.trim() || null,
+      officePhone: dto.officePhone?.trim() || null,
+      operatingProvince: dto.operatingProvince?.trim() || null,
+      operatingDistrict: dto.operatingDistrict?.trim() || null,
+      businessLocation: dto.businessLocation?.trim() || null,
+      representativeName: dto.representativeName?.trim() || null,
+      representativePhone: dto.representativePhone?.trim() || null,
+      businessTypeId: dto.businessTypeId,
+      businessIndustryId: dto.businessIndustryId,
+      gpkdFilePath: dto.gpkdFilePath || null,
+      otherDocumentPath: dto.otherDocumentPath || null,
+      isActive: dto.isActive !== undefined ? dto.isActive : true,
+      otpHash,
+      otpExpiresAt: new Date(Date.now() + 5 * 60 * 1000),
+      status: BusinessRegistrationStatus.PENDING,
+    });
+
+    const savedRegistration =
+      await this.businessRegistrationRequestRepository.save(registration);
+
+    // 9. Gửi OTP qua email SMTP
+    try {
+      await this.mailService.sendEmailChangeOtp(email, otp);
+    } catch (error) {
+      console.error('Lỗi gửi OTP:', error);
+
+      throw new ServiceUnavailableException(
+        'Không thể gửi mã OTP đến email. Vui lòng thử lại sau.',
+      );
+    }
+
+    // 10. Trả kết quả, không trả OTP hoặc otpHash
+    return Response.get({
+      message: 'Mã OTP đã được gửi đến email bạn vừa đăng kí.',
+      registrationRequestId: savedRegistration.id,
+      email,
+      expiresIn: 300,
+    });
+  }
+
+  //  Xác thực OTP và hoàn tất đăng ký doanh nghiệp
+  async verifyBusinessRegistrationOtp(
+  registrationRequestId: string,
+  otp: string,
+) {
+  // 1. Tìm thông tin đăng ký và lấy thêm otpHash
+  const registration = await this.businessRegistrationRequestRepository
+    .createQueryBuilder('registration')
+    .addSelect('registration.otpHash')
+    .where('registration.id = :id', {
+      id: registrationRequestId,
+    })
+    .getOne();
+
+  if (!registration) {
+    throw Response.errorNotFound(
+      'Không tìm thấy yêu cầu đăng ký doanh nghiệp.',
+    );
+  }
+
+  // 2. Kiểm tra trạng thái đăng ký
+  if (registration.status !== BusinessRegistrationStatus.PENDING) {
+    throw Response.errorBad(
+      'Yêu cầu đăng ký không hợp lệ hoặc đã được xử lý.',
+    );
+  }
+
+  // 3. Kiểm tra OTP có tồn tại không
+  if (!registration.otpHash || !registration.otpExpiresAt) {
+    throw Response.errorBad(
+      'Mã OTP không tồn tại hoặc đã được sử dụng.',
+    );
+  }
+
+  // 4. Kiểm tra OTP hết hạn
+  if (registration.otpExpiresAt.getTime() < Date.now()) {
+    throw Response.errorBad('Mã OTP đã hết hạn.');
+  }
+
+  // 5. So sánh OTP người dùng nhập với OTP đã hash
+  const isValidOtp = await bcrypt.compare(
+    otp,
+    registration.otpHash,
+  );
+
+  if (!isValidOtp) {
+    throw Response.errorBad('Mã OTP không chính xác.');
+  }
+
+  // 6. Loại bỏ các trường không muốn trả về
+  const {
+    otpHash,
+    otpExpiresAt,
+    status,
+    ...businessRegistrationInfo
+  } = registration;
+
+  // 7. Trả về thông tin đăng ký
+  return Response.get({
+    ...businessRegistrationInfo,
+    message: 'Xác thực OTP thành công.',
+  });
+}
 
   // 1. POST /business: Tạo mới doanh nghiệp
   async create(dto: CreateBusinessDto) {
