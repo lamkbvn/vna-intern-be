@@ -509,7 +509,7 @@ export class UsersService {
         );
 
         if (!isValid) {
-            throw new UnauthorizedException('OTP không chính xác');
+            throw new BadRequestException('Mã OTP không chính xác, vui lòng kiểm tra lại');
         }
 
         await this.userRepository.update(userId, {
@@ -544,7 +544,7 @@ export class UsersService {
 
         if (normalizedEmail === user.email.toLowerCase()) {
             throw new BadRequestException(
-                'Email mới phải khác email hiện tại',
+                'Email mới không được trùng email hiện tại , vui lòng kiểm tra lại dữ liệu',
             );
         }
 
@@ -553,7 +553,7 @@ export class UsersService {
         });
 
         if (existingUser) {
-            throw new ConflictException('Email mới đã được sử dụng');
+            throw new ConflictException('Email mới đã tồn tại trên hệ thống, vui lòng kiểm tra lại dữ liệu');
         }
 
         // Cập nhật có điều kiện để không thể dùng lại trạng thái xác minh.
@@ -574,6 +574,17 @@ export class UsersService {
             throw new BadRequestException(
                 'Yêu cầu đổi email không còn hợp lệ. Vui lòng xác minh lại OTP.',
             );
+        }
+
+        if (user.businessId) {
+            try {
+                await this.userRepository.manager.query(
+                    'UPDATE businesses SET email = $1 WHERE id = $2',
+                    [normalizedEmail, user.businessId],
+                );
+            } catch (syncErr) {
+                console.warn('Không thể đồng bộ email sang bảng businesses:', syncErr);
+            }
         }
 
         return Response.get({
@@ -616,6 +627,123 @@ export class UsersService {
 
         return Response.get({
             message: `Xóa thành công ${validIds.length} người dùng`,
+        });
+    }
+
+    async getDeletedUsers(pageNumber: number = 1, pageSize: number = 100) {
+        pageNumber = Math.max(1, Math.floor(pageNumber));
+        pageSize = Math.min(100, Math.max(1, Math.floor(pageSize)));
+
+        const [users, total] = await this.userRepository.findAndCount({
+            where: { isDeleted: true },
+            select: {
+                id: true,
+                username: true,
+                email: true,
+                fullName: true,
+                gender: true,
+                dateOfBirth: true,
+                province: true,
+                district: true,
+                streetAddress: true,
+                avatar: true,
+                position: true,
+                isActive: true,
+                role: true,
+                businessId: true,
+                createdAt: true,
+                updatedAt: true,
+            },
+            order: {
+                updatedAt: 'DESC',
+                id: 'ASC',
+            },
+            skip: (pageNumber - 1) * pageSize,
+            take: pageSize,
+        });
+
+        return Response.getList({
+            items: users,
+            count: total,
+            pageNumber,
+            pageSize,
+        });
+    }
+
+    async restoreUser(id: string) {
+        const user = await this.userRepository.findOne({
+            where: { isDeleted: true, id },
+        });
+
+        if (!user) {
+            throw Response.errorNotFound('Không tìm thấy tài khoản đã xóa hoặc tài khoản chưa bị xóa');
+        }
+
+        user.isDeleted = false;
+        user.isActive = true;
+        await this.userRepository.save(user);
+
+        return Response.get({
+            message: 'Khôi phục tài khoản thành công',
+            user: {
+                id: user.id,
+                username: user.username,
+                email: user.email,
+                fullName: user.fullName,
+            },
+        });
+    }
+
+    async restoreUsers(ids: string[]) {
+        if (!ids || ids.length === 0) {
+            throw new BadRequestException('Danh sách ID người dùng không được để trống');
+        }
+
+        const validIds = ids.map((id) => String(id).trim()).filter(Boolean);
+        if (validIds.length === 0) {
+            throw new BadRequestException('Danh sách ID không hợp lệ');
+        }
+
+        const result = await this.userRepository.update(
+            { id: In(validIds), isDeleted: true },
+            { isDeleted: false, isActive: true }
+        );
+
+        return Response.get({
+            message: `Khôi phục thành công ${result.affected || validIds.length} tài khoản`,
+        });
+    }
+
+    async permanentDeleteUser(id: string) {
+        const user = await this.userRepository.findOne({
+            where: { id },
+        });
+
+        if (!user) {
+            throw Response.errorNotFound(Response.NOT_FOUND('User'));
+        }
+
+        await this.userRepository.delete(id);
+
+        return Response.get({
+            message: 'Đã xóa vĩnh viễn tài khoản khỏi cơ sở dữ liệu',
+        });
+    }
+
+    async permanentDeleteUsers(ids: string[]) {
+        if (!ids || ids.length === 0) {
+            throw new BadRequestException('Danh sách ID người dùng không được để trống');
+        }
+
+        const validIds = ids.map((id) => String(id).trim()).filter(Boolean);
+        if (validIds.length === 0) {
+            throw new BadRequestException('Danh sách ID không hợp lệ');
+        }
+
+        const result = await this.userRepository.delete({ id: In(validIds) });
+
+        return Response.get({
+            message: `Đã xóa vĩnh viễn ${result.affected || validIds.length} tài khoản khỏi cơ sở dữ liệu`,
         });
     }
 
