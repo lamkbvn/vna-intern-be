@@ -20,14 +20,11 @@ import { UserRole } from '../users/user.entity.js';
 import { VerifyBusinessRegistrationOtpDto } from './dto/verify-business-registration-otp.dto.js';
 
 @Controller(['business', 'businesses'])
-@UseGuards(JwtAuthGuard, RolesGuard)
 export class BusinessController {
   constructor(private readonly businessService: BusinessService) {}
 
-
-    // 1. POST /business/register-bussiness: đăng kí doanh nghiệp
-  @Post('register-bussiness')
-  @Roles(UserRole.ADMIN, UserRole.MANAGER, UserRole.EMPLOYEE)
+  // 1. POST /business/register-bussiness: đăng kí doanh nghiệp (Public)
+  @Post(['register-bussiness', 'register-business'])
   register(@Body() createBusinessDto: CreateBusinessDto) {
     return this.businessService.registerBusiness(createBusinessDto);
   }
@@ -45,6 +42,7 @@ async verifyBusinessRegistrationOtp(
 
   // 1. POST /business: Tạo mới doanh nghiệp
   @Post()
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN, UserRole.MANAGER, UserRole.EMPLOYEE)
   create(@Body() createBusinessDto: CreateBusinessDto) {
     return this.businessService.create(createBusinessDto);
@@ -52,6 +50,7 @@ async verifyBusinessRegistrationOtp(
 
   // 2. GET /business: Danh sách doanh nghiệp có phân trang, tìm kiếm & bộ lọc
   @Get()
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN, UserRole.MANAGER, UserRole.EMPLOYEE)
   findAll(@Query() query: QueryBusinessDto) {
     return this.businessService.findAll(query);
@@ -59,6 +58,7 @@ async verifyBusinessRegistrationOtp(
 
   // 3. GET /business/:id: Chi tiết doanh nghiệp
   @Get(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN, UserRole.MANAGER, UserRole.EMPLOYEE, UserRole.DOANH_NGHIEP)
   findOne(@Param('id') id: string) {
     return this.businessService.findOne(id);
@@ -66,6 +66,7 @@ async verifyBusinessRegistrationOtp(
 
   // 4. PATCH /business/:id: Cập nhật thông tin doanh nghiệp
   @Patch(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN, UserRole.MANAGER, UserRole.EMPLOYEE, UserRole.DOANH_NGHIEP)
   update(
     @Param('id') id: string,
@@ -76,6 +77,7 @@ async verifyBusinessRegistrationOtp(
 
   // 5. DELETE /business/:id: Xóa doanh nghiệp
   @Delete(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN, UserRole.MANAGER)
   remove(@Param('id') id: string) {
     return this.businessService.remove(id);
@@ -83,6 +85,7 @@ async verifyBusinessRegistrationOtp(
 
   // 6. PATCH /business/:id/reset-password: Khởi tạo mật khẩu cho tài khoản doanh nghiệp
   @Patch(':id/reset-password')
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN, UserRole.MANAGER)
   resetPassword(
     @Param('id') id: string,
