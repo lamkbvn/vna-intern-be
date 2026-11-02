@@ -24,6 +24,7 @@ export class ReportController {
    *
    * GET /reports/overview?year=2026&period=12%20months
    */
+  // thong tin tong quan
   @Get('overview')
   async getOverview(
     @Query('year', ParseIntPipe) year: number,
@@ -39,6 +40,14 @@ export class ReportController {
     return this.reportService.getOverview(year, period);
   }
 
+    /**
+   * GET /reports/accident-statisticsyear=2026
+   *
+   * GET /reports/accident-statistics?year=2026&period=6%20months
+   *
+   * GET /reports/accident-statistics?year=2026&period=12%20months
+   */
+  // phan loai tai nan lao dong
   @Get('accident-statistics')
   async getAccidentStatistics(
     @Query(

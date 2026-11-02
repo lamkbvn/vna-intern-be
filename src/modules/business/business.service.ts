@@ -209,7 +209,44 @@ export class BusinessService {
     throw Response.errorBad('Mã OTP không chính xác.');
   }
 
-  // 6. Loại bỏ các trường không muốn trả về
+  // 6. Cập nhật trạng thái yêu cầu đăng ký
+  registration.status = BusinessRegistrationStatus.COMPLETED;
+  registration.otpHash = null as any;
+  registration.otpExpiresAt = null as any;
+  await this.businessRegistrationRequestRepository.save(registration);
+
+  // 7. Tạo doanh nghiệp và tài khoản đăng nhập tương ứng
+  try {
+    const licenseDateStr = registration.licenseDate
+      ? String(registration.licenseDate)
+      : undefined;
+
+    await this.create({
+      name: registration.name,
+      taxCode: registration.taxCode,
+      email: registration.email,
+      address: registration.address || undefined,
+      registeredDistrict: registration.registeredDistrict || undefined,
+      registeredProvince: registration.registeredProvince || undefined,
+      licenseDate: licenseDateStr,
+      foreignName: registration.foreignName || undefined,
+      officePhone: registration.officePhone || undefined,
+      operatingProvince: registration.operatingProvince || undefined,
+      operatingDistrict: registration.operatingDistrict || undefined,
+      businessLocation: registration.businessLocation || undefined,
+      representativeName: registration.representativeName || undefined,
+      representativePhone: registration.representativePhone || undefined,
+      businessTypeId: registration.businessTypeId,
+      businessIndustryId: registration.businessIndustryId,
+      gpkdFilePath: registration.gpkdFilePath || undefined,
+      otherDocumentPath: registration.otherDocumentPath || undefined,
+      isActive: registration.isActive,
+    });
+  } catch (createErr) {
+    console.error('Lỗi khi tạo doanh nghiệp sau khi xác thực OTP:', createErr);
+  }
+
+  // 8. Loại bỏ các trường nhạy cảm và trả về kết quả
   const {
     otpHash,
     otpExpiresAt,
@@ -217,10 +254,9 @@ export class BusinessService {
     ...businessRegistrationInfo
   } = registration;
 
-  // 7. Trả về thông tin đăng ký
   return Response.get({
     ...businessRegistrationInfo,
-    message: 'Xác thực OTP thành công.',
+    message: 'Xác thực OTP thành công. Tài khoản doanh nghiệp đã được khởi tạo.',
   });
 }
 
