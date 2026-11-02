@@ -43,13 +43,15 @@ export class LocationService implements OnModuleInit {
     }
   }
 
-  // 1. Lấy tất cả Tỉnh/Thành phố
+  // 1. Lấy tất cả Tỉnh/Thành phố (Chỉ lấy TP. Hồ Chí Minh id 79)
   getAllProvinces() {
-    return this.provincesData.map(province => ({
-      id: province.id,
-      name: province.name,
-      type: province.type,
-    }));
+    return this.provincesData
+      .filter((province) => String(province.id) === '79')
+      .map((province) => ({
+        id: province.id,
+        name: province.name,
+        type: province.type,
+      }));
   }
 
   // 2. Lấy Quận/Huyện theo ID Tỉnh/Thành phố
@@ -90,7 +92,8 @@ export class LocationService implements OnModuleInit {
         for (const district of city.districts) {
           wards.push({
             id: district.id,
-            name: `${district.name} (${city.name})`,
+            // name: `${district.name} (${city.name})`,
+            name: district.name, // Chỉ lấy "Phường Bến Nghé"
             provinceId: province.id,
           });
         }

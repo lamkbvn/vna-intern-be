@@ -47616,1780 +47616,849 @@
     "type": "Thành phố Trung ương",
     "cities": [
       {
-        "id": "760",
-        "name": "Quận 1",
-        "type": "Quận",
+        "id": "79",
+        "name": "Thành phố Hồ Chí Minh",
+        "type": "thanh-pho",
         "districts": [
           {
-            "id": "26734",
-            "name": "Phường Tân Định",
-            "type": "Phường"
+            "id": "25747",
+            "name": "Phường Thủ Dầu Một",
+            "type": "phuong"
+          },
+          {
+            "id": "25750",
+            "name": "Phường Phú Lợi",
+            "type": "phuong"
+          },
+          {
+            "id": "25760",
+            "name": "Phường Bình Dương",
+            "type": "phuong"
+          },
+          {
+            "id": "25768",
+            "name": "Phường Phú An",
+            "type": "phuong"
+          },
+          {
+            "id": "25771",
+            "name": "Phường Chánh Hiệp",
+            "type": "phuong"
+          },
+          {
+            "id": "25777",
+            "name": "Xã Dầu Tiếng",
+            "type": "xa"
+          },
+          {
+            "id": "25780",
+            "name": "Xã Minh Thạnh",
+            "type": "xa"
+          },
+          {
+            "id": "25792",
+            "name": "Xã Long Hòa",
+            "type": "xa"
+          },
+          {
+            "id": "25807",
+            "name": "Xã Thanh An",
+            "type": "xa"
+          },
+          {
+            "id": "25813",
+            "name": "Phường Bến Cát",
+            "type": "phuong"
+          },
+          {
+            "id": "25819",
+            "name": "Xã Trừ Văn Thố",
+            "type": "xa"
+          },
+          {
+            "id": "25822",
+            "name": "Xã Bàu Bàng",
+            "type": "xa"
+          },
+          {
+            "id": "25837",
+            "name": "Phường Chánh Phú Hòa",
+            "type": "phuong"
+          },
+          {
+            "id": "25840",
+            "name": "Phường Long Nguyên",
+            "type": "phuong"
+          },
+          {
+            "id": "25843",
+            "name": "Phường Tây Nam",
+            "type": "phuong"
+          },
+          {
+            "id": "25846",
+            "name": "Phường Thới Hòa",
+            "type": "phuong"
+          },
+          {
+            "id": "25849",
+            "name": "Phường Hòa Lợi",
+            "type": "phuong"
+          },
+          {
+            "id": "25858",
+            "name": "Xã Phú Giáo",
+            "type": "xa"
+          },
+          {
+            "id": "25864",
+            "name": "Xã Phước Thành",
+            "type": "xa"
+          },
+          {
+            "id": "25867",
+            "name": "Xã An Long",
+            "type": "xa"
+          },
+          {
+            "id": "25882",
+            "name": "Xã Phước Hòa",
+            "type": "xa"
+          },
+          {
+            "id": "25888",
+            "name": "Phường Tân Uyên",
+            "type": "phuong"
+          },
+          {
+            "id": "25891",
+            "name": "Phường Tân Khánh",
+            "type": "phuong"
+          },
+          {
+            "id": "25906",
+            "name": "Xã Bắc Tân Uyên",
+            "type": "xa"
+          },
+          {
+            "id": "25909",
+            "name": "Xã Thường Tân",
+            "type": "xa"
+          },
+          {
+            "id": "25912",
+            "name": "Phường Vĩnh Tân",
+            "type": "phuong"
+          },
+          {
+            "id": "25915",
+            "name": "Phường Bình Cơ",
+            "type": "phuong"
+          },
+          {
+            "id": "25920",
+            "name": "Phường Tân Hiệp",
+            "type": "phuong"
+          },
+          {
+            "id": "25942",
+            "name": "Phường Dĩ An",
+            "type": "phuong"
+          },
+          {
+            "id": "25945",
+            "name": "Phường Tân Đông Hiệp",
+            "type": "phuong"
+          },
+          {
+            "id": "25951",
+            "name": "Phường Đông Hòa",
+            "type": "phuong"
+          },
+          {
+            "id": "25966",
+            "name": "Phường Lái Thiêu",
+            "type": "phuong"
+          },
+          {
+            "id": "25969",
+            "name": "Phường Thuận Giao",
+            "type": "phuong"
+          },
+          {
+            "id": "25975",
+            "name": "Phường An Phú",
+            "type": "phuong"
+          },
+          {
+            "id": "25978",
+            "name": "Phường Thuận An",
+            "type": "phuong"
+          },
+          {
+            "id": "25987",
+            "name": "Phường Bình Hòa",
+            "type": "phuong"
+          },
+          {
+            "id": "26506",
+            "name": "Phường Vũng Tàu",
+            "type": "phuong"
+          },
+          {
+            "id": "26526",
+            "name": "Phường Tam Thắng",
+            "type": "phuong"
+          },
+          {
+            "id": "26536",
+            "name": "Phường Rạch Dừa",
+            "type": "phuong"
+          },
+          {
+            "id": "26542",
+            "name": "Phường Phước Thắng",
+            "type": "phuong"
+          },
+          {
+            "id": "26545",
+            "name": "Xã Long Sơn",
+            "type": "xa"
+          },
+          {
+            "id": "26560",
+            "name": "Phường Bà Rịa",
+            "type": "phuong"
+          },
+          {
+            "id": "26566",
+            "name": "Phường Long Hương",
+            "type": "phuong"
+          },
+          {
+            "id": "26572",
+            "name": "Phường Tam Long",
+            "type": "phuong"
+          },
+          {
+            "id": "26575",
+            "name": "Xã Ngãi Giao",
+            "type": "xa"
+          },
+          {
+            "id": "26584",
+            "name": "Xã Xuân Sơn",
+            "type": "xa"
+          },
+          {
+            "id": "26590",
+            "name": "Xã Bình Giã",
+            "type": "xa"
+          },
+          {
+            "id": "26596",
+            "name": "Xã Châu Đức",
+            "type": "xa"
+          },
+          {
+            "id": "26608",
+            "name": "Xã Kim Long",
+            "type": "xa"
+          },
+          {
+            "id": "26617",
+            "name": "Xã Nghĩa Thành",
+            "type": "xa"
+          },
+          {
+            "id": "26620",
+            "name": "Xã Hồ Tràm",
+            "type": "xa"
+          },
+          {
+            "id": "26632",
+            "name": "Xã Xuyên Mộc",
+            "type": "xa"
+          },
+          {
+            "id": "26638",
+            "name": "Xã Bàu Lâm",
+            "type": "xa"
+          },
+          {
+            "id": "26641",
+            "name": "Xã Hòa Hội",
+            "type": "xa"
+          },
+          {
+            "id": "26647",
+            "name": "Xã Hòa Hiệp",
+            "type": "xa"
+          },
+          {
+            "id": "26656",
+            "name": "Xã Bình Châu",
+            "type": "xa"
+          },
+          {
+            "id": "26659",
+            "name": "Xã Long Điền",
+            "type": "xa"
+          },
+          {
+            "id": "26662",
+            "name": "Xã Long Hải",
+            "type": "xa"
+          },
+          {
+            "id": "26680",
+            "name": "Xã Đất Đỏ",
+            "type": "xa"
+          },
+          {
+            "id": "26686",
+            "name": "Xã Phước Hải",
+            "type": "xa"
+          },
+          {
+            "id": "26704",
+            "name": "Phường Phú Mỹ",
+            "type": "phuong"
+          },
+          {
+            "id": "26710",
+            "name": "Phường Tân Hải",
+            "type": "phuong"
+          },
+          {
+            "id": "26713",
+            "name": "Phường Tân Phước",
+            "type": "phuong"
+          },
+          {
+            "id": "26725",
+            "name": "Phường Tân Thành",
+            "type": "phuong"
+          },
+          {
+            "id": "26728",
+            "name": "Xã Châu Pha",
+            "type": "xa"
+          },
+          {
+            "id": "26732",
+            "name": "Đặc khu Côn Đảo",
+            "type": "phuong"
           },
           {
             "id": "26737",
-            "name": "Phường Đa Kao",
-            "type": "Phường"
+            "name": "Phường Tân Định",
+            "type": "phuong"
           },
           {
             "id": "26740",
-            "name": "Phường Bến Nghé",
-            "type": "Phường"
+            "name": "Phường Sài Gòn",
+            "type": "phuong"
           },
           {
             "id": "26743",
             "name": "Phường Bến Thành",
-            "type": "Phường"
-          },
-          {
-            "id": "26746",
-            "name": "Phường Nguyễn Thái Bình",
-            "type": "Phường"
-          },
-          {
-            "id": "26749",
-            "name": "Phường Phạm Ngũ Lão",
-            "type": "Phường"
-          },
-          {
-            "id": "26752",
-            "name": "Phường Cầu Ông Lãnh",
-            "type": "Phường"
-          },
-          {
-            "id": "26755",
-            "name": "Phường Cô Giang",
-            "type": "Phường"
+            "type": "phuong"
           },
           {
             "id": "26758",
-            "name": "Phường Nguyễn Cư Trinh",
-            "type": "Phường"
-          },
-          {
-            "id": "26761",
-            "name": "Phường Cầu Kho",
-            "type": "Phường"
-          }
-        ]
-      },
-      {
-        "id": "761",
-        "name": "Quận 12",
-        "type": "Quận",
-        "districts": [
-          {
-            "id": "26764",
-            "name": "Phường Thạnh Xuân",
-            "type": "Phường"
+            "name": "Phường Cầu Ông Lãnh",
+            "type": "phuong"
           },
           {
             "id": "26767",
-            "name": "Phường Thạnh Lộc",
-            "type": "Phường"
-          },
-          {
-            "id": "26770",
-            "name": "Phường Hiệp Thành",
-            "type": "Phường"
+            "name": "Phường An Phú Đông",
+            "type": "phuong"
           },
           {
             "id": "26773",
             "name": "Phường Thới An",
-            "type": "Phường"
-          },
-          {
-            "id": "26776",
-            "name": "Phường Tân Chánh Hiệp",
-            "type": "Phường"
-          },
-          {
-            "id": "26779",
-            "name": "Phường An Phú Đông",
-            "type": "Phường"
+            "type": "phuong"
           },
           {
             "id": "26782",
             "name": "Phường Tân Thới Hiệp",
-            "type": "Phường"
+            "type": "phuong"
           },
           {
             "id": "26785",
             "name": "Phường Trung Mỹ Tây",
-            "type": "Phường"
-          },
-          {
-            "id": "26787",
-            "name": "Phường Tân Hưng Thuận",
-            "type": "Phường"
-          },
-          {
-            "id": "26788",
-            "name": "Phường Đông Hưng Thuận",
-            "type": "Phường"
+            "type": "phuong"
           },
           {
             "id": "26791",
-            "name": "Phường Tân Thới Nhất",
-            "type": "Phường"
-          }
-        ]
-      },
-      {
-        "id": "762",
-        "name": "Quận Thủ Đức",
-        "type": "Quận",
-        "districts": [
-          {
-            "id": "26794",
-            "name": "Phường Linh Xuân",
-            "type": "Phường"
-          },
-          {
-            "id": "26797",
-            "name": "Phường Bình Chiểu",
-            "type": "Phường"
+            "name": "Phường Đông Hưng Thuận",
+            "type": "phuong"
           },
           {
             "id": "26800",
-            "name": "Phường Linh Trung",
-            "type": "Phường"
+            "name": "Phường Linh Xuân",
+            "type": "phuong"
           },
           {
             "id": "26803",
             "name": "Phường Tam Bình",
-            "type": "Phường"
-          },
-          {
-            "id": "26806",
-            "name": "Phường Tam Phú",
-            "type": "Phường"
+            "type": "phuong"
           },
           {
             "id": "26809",
-            "name": "Phường Hiệp Bình Phước",
-            "type": "Phường"
-          },
-          {
-            "id": "26812",
-            "name": "Phường Hiệp Bình Chánh",
-            "type": "Phường"
-          },
-          {
-            "id": "26815",
-            "name": "Phường Linh Chiểu",
-            "type": "Phường"
-          },
-          {
-            "id": "26818",
-            "name": "Phường Linh Tây",
-            "type": "Phường"
-          },
-          {
-            "id": "26821",
-            "name": "Phường Linh Đông",
-            "type": "Phường"
+            "name": "Phường Hiệp Bình",
+            "type": "phuong"
           },
           {
             "id": "26824",
-            "name": "Phường Bình Thọ",
-            "type": "Phường"
-          },
-          {
-            "id": "26827",
-            "name": "Phường Trường Thọ",
-            "type": "Phường"
-          }
-        ]
-      },
-      {
-        "id": "763",
-        "name": "Quận 9",
-        "type": "Quận",
-        "districts": [
-          {
-            "id": "26830",
-            "name": "Phường Long Bình",
-            "type": "Phường"
+            "name": "Phường Thủ Đức",
+            "type": "phuong"
           },
           {
             "id": "26833",
-            "name": "Phường Long Thạnh Mỹ",
-            "type": "Phường"
-          },
-          {
-            "id": "26836",
-            "name": "Phường Tân Phú",
-            "type": "Phường"
-          },
-          {
-            "id": "26839",
-            "name": "Phường Hiệp Phú",
-            "type": "Phường"
+            "name": "Phường Long Bình",
+            "type": "phuong"
           },
           {
             "id": "26842",
-            "name": "Phường Tăng Nhơn Phú A",
-            "type": "Phường"
-          },
-          {
-            "id": "26845",
-            "name": "Phường Tăng Nhơn Phú B",
-            "type": "Phường"
+            "name": "Phường Tăng Nhơn Phú",
+            "type": "phuong"
           },
           {
             "id": "26848",
-            "name": "Phường Phước Long B",
-            "type": "Phường"
-          },
-          {
-            "id": "26851",
-            "name": "Phường Phước Long A",
-            "type": "Phường"
-          },
-          {
-            "id": "26854",
-            "name": "Phường Trường Thạnh",
-            "type": "Phường"
+            "name": "Phường Phước Long",
+            "type": "phuong"
           },
           {
             "id": "26857",
             "name": "Phường Long Phước",
-            "type": "Phường"
+            "type": "phuong"
           },
           {
             "id": "26860",
             "name": "Phường Long Trường",
-            "type": "Phường"
-          },
-          {
-            "id": "26863",
-            "name": "Phường Phước Bình",
-            "type": "Phường"
-          },
-          {
-            "id": "26866",
-            "name": "Phường Phú Hữu",
-            "type": "Phường"
-          }
-        ]
-      },
-      {
-        "id": "764",
-        "name": "Quận Gò Vấp",
-        "type": "Quận",
-        "districts": [
-          {
-            "id": "26869",
-            "name": "Phường 15",
-            "type": "Phường"
-          },
-          {
-            "id": "26872",
-            "name": "Phường 13",
-            "type": "Phường"
-          },
-          {
-            "id": "26875",
-            "name": "Phường 17",
-            "type": "Phường"
+            "type": "phuong"
           },
           {
             "id": "26876",
-            "name": "Phường 6",
-            "type": "Phường"
+            "name": "Phường An Nhơn",
+            "type": "phuong"
           },
           {
             "id": "26878",
-            "name": "Phường 16",
-            "type": "Phường"
-          },
-          {
-            "id": "26881",
-            "name": "Phường 12",
-            "type": "Phường"
+            "name": "Phường An Hội Đông",
+            "type": "phuong"
           },
           {
             "id": "26882",
-            "name": "Phường 14",
-            "type": "Phường"
+            "name": "Phường An Hội Tây",
+            "type": "phuong"
           },
           {
             "id": "26884",
-            "name": "Phường 10",
-            "type": "Phường"
-          },
-          {
-            "id": "26887",
-            "name": "Phường 05",
-            "type": "Phường"
+            "name": "Phường Gò Vấp",
+            "type": "phuong"
           },
           {
             "id": "26890",
-            "name": "Phường 07",
-            "type": "Phường"
-          },
-          {
-            "id": "26893",
-            "name": "Phường 04",
-            "type": "Phường"
-          },
-          {
-            "id": "26896",
-            "name": "Phường 01",
-            "type": "Phường"
-          },
-          {
-            "id": "26897",
-            "name": "Phường 9",
-            "type": "Phường"
+            "name": "Phường Hạnh Thông",
+            "type": "phuong"
           },
           {
             "id": "26898",
-            "name": "Phường 8",
-            "type": "Phường"
+            "name": "Phường Thông Tây Hội",
+            "type": "phuong"
           },
-          {
-            "id": "26899",
-            "name": "Phường 11",
-            "type": "Phường"
-          },
-          {
-            "id": "26902",
-            "name": "Phường 03",
-            "type": "Phường"
-          }
-        ]
-      },
-      {
-        "id": "765",
-        "name": "Quận Bình Thạnh",
-        "type": "Quận",
-        "districts": [
           {
             "id": "26905",
-            "name": "Phường 13",
-            "type": "Phường"
-          },
-          {
-            "id": "26908",
-            "name": "Phường 11",
-            "type": "Phường"
+            "name": "Phường Bình Lợi Trung",
+            "type": "phuong"
           },
           {
             "id": "26911",
-            "name": "Phường 27",
-            "type": "Phường"
-          },
-          {
-            "id": "26914",
-            "name": "Phường 26",
-            "type": "Phường"
-          },
-          {
-            "id": "26917",
-            "name": "Phường 12",
-            "type": "Phường"
-          },
-          {
-            "id": "26920",
-            "name": "Phường 25",
-            "type": "Phường"
-          },
-          {
-            "id": "26923",
-            "name": "Phường 05",
-            "type": "Phường"
-          },
-          {
-            "id": "26926",
-            "name": "Phường 07",
-            "type": "Phường"
+            "name": "Phường Bình Quới",
+            "type": "phuong"
           },
           {
             "id": "26929",
-            "name": "Phường 24",
-            "type": "Phường"
-          },
-          {
-            "id": "26932",
-            "name": "Phường 06",
-            "type": "Phường"
-          },
-          {
-            "id": "26935",
-            "name": "Phường 14",
-            "type": "Phường"
-          },
-          {
-            "id": "26938",
-            "name": "Phường 15",
-            "type": "Phường"
-          },
-          {
-            "id": "26941",
-            "name": "Phường 02",
-            "type": "Phường"
+            "name": "Phường Bình Thạnh",
+            "type": "phuong"
           },
           {
             "id": "26944",
-            "name": "Phường 01",
-            "type": "Phường"
-          },
-          {
-            "id": "26947",
-            "name": "Phường 03",
-            "type": "Phường"
-          },
-          {
-            "id": "26950",
-            "name": "Phường 17",
-            "type": "Phường"
-          },
-          {
-            "id": "26953",
-            "name": "Phường 21",
-            "type": "Phường"
+            "name": "Phường Gia Định",
+            "type": "phuong"
           },
           {
             "id": "26956",
-            "name": "Phường 22",
-            "type": "Phường"
-          },
-          {
-            "id": "26959",
-            "name": "Phường 19",
-            "type": "Phường"
-          },
-          {
-            "id": "26962",
-            "name": "Phường 28",
-            "type": "Phường"
-          }
-        ]
-      },
-      {
-        "id": "766",
-        "name": "Quận Tân Bình",
-        "type": "Quận",
-        "districts": [
-          {
-            "id": "26965",
-            "name": "Phường 02",
-            "type": "Phường"
+            "name": "Phường Thạnh Mỹ Tây",
+            "type": "phuong"
           },
           {
             "id": "26968",
-            "name": "Phường 04",
-            "type": "Phường"
-          },
-          {
-            "id": "26971",
-            "name": "Phường 12",
-            "type": "Phường"
-          },
-          {
-            "id": "26974",
-            "name": "Phường 13",
-            "type": "Phường"
+            "name": "Phường Tân Sơn Nhất",
+            "type": "phuong"
           },
           {
             "id": "26977",
-            "name": "Phường 01",
-            "type": "Phường"
-          },
-          {
-            "id": "26980",
-            "name": "Phường 03",
-            "type": "Phường"
+            "name": "Phường Tân Sơn Hòa",
+            "type": "phuong"
           },
           {
             "id": "26983",
-            "name": "Phường 11",
-            "type": "Phường"
-          },
-          {
-            "id": "26986",
-            "name": "Phường 07",
-            "type": "Phường"
-          },
-          {
-            "id": "26989",
-            "name": "Phường 05",
-            "type": "Phường"
-          },
-          {
-            "id": "26992",
-            "name": "Phường 10",
-            "type": "Phường"
+            "name": "Phường Bảy Hiền",
+            "type": "phuong"
           },
           {
             "id": "26995",
-            "name": "Phường 06",
-            "type": "Phường"
-          },
-          {
-            "id": "26998",
-            "name": "Phường 08",
-            "type": "Phường"
-          },
-          {
-            "id": "27001",
-            "name": "Phường 09",
-            "type": "Phường"
+            "name": "Phường Tân Hòa",
+            "type": "phuong"
           },
           {
             "id": "27004",
-            "name": "Phường 14",
-            "type": "Phường"
+            "name": "Phường Tân Bình",
+            "type": "phuong"
           },
           {
             "id": "27007",
-            "name": "Phường 15",
-            "type": "Phường"
-          }
-        ]
-      },
-      {
-        "id": "767",
-        "name": "Quận Tân Phú",
-        "type": "Quận",
-        "districts": [
-          {
-            "id": "27010",
-            "name": "Phường Tân Sơn Nhì",
-            "type": "Phường"
+            "name": "Phường Tân Sơn",
+            "type": "phuong"
           },
           {
             "id": "27013",
             "name": "Phường Tây Thạnh",
-            "type": "Phường"
-          },
-          {
-            "id": "27016",
-            "name": "Phường Sơn Kỳ",
-            "type": "Phường"
+            "type": "phuong"
           },
           {
             "id": "27019",
-            "name": "Phường Tân Quý",
-            "type": "Phường"
+            "name": "Phường Tân Sơn Nhì",
+            "type": "phuong"
           },
           {
             "id": "27022",
-            "name": "Phường Tân Thành",
-            "type": "Phường"
-          },
-          {
-            "id": "27025",
             "name": "Phường Phú Thọ Hòa",
-            "type": "Phường"
+            "type": "phuong"
           },
           {
             "id": "27028",
             "name": "Phường Phú Thạnh",
-            "type": "Phường"
+            "type": "phuong"
           },
           {
             "id": "27031",
-            "name": "Phường Phú Trung",
-            "type": "Phường"
+            "name": "Phường Tân Phú",
+            "type": "phuong"
           },
-          {
-            "id": "27034",
-            "name": "Phường Hòa Thạnh",
-            "type": "Phường"
-          },
-          {
-            "id": "27037",
-            "name": "Phường Hiệp Tân",
-            "type": "Phường"
-          },
-          {
-            "id": "27040",
-            "name": "Phường Tân Thới Hòa",
-            "type": "Phường"
-          }
-        ]
-      },
-      {
-        "id": "768",
-        "name": "Quận Phú Nhuận",
-        "type": "Quận",
-        "districts": [
           {
             "id": "27043",
-            "name": "Phường 04",
-            "type": "Phường"
-          },
-          {
-            "id": "27046",
-            "name": "Phường 05",
-            "type": "Phường"
-          },
-          {
-            "id": "27049",
-            "name": "Phường 09",
-            "type": "Phường"
-          },
-          {
-            "id": "27052",
-            "name": "Phường 07",
-            "type": "Phường"
-          },
-          {
-            "id": "27055",
-            "name": "Phường 03",
-            "type": "Phường"
+            "name": "Phường Đức Nhuận",
+            "type": "phuong"
           },
           {
             "id": "27058",
-            "name": "Phường 01",
-            "type": "Phường"
-          },
-          {
-            "id": "27061",
-            "name": "Phường 02",
-            "type": "Phường"
-          },
-          {
-            "id": "27064",
-            "name": "Phường 08",
-            "type": "Phường"
-          },
-          {
-            "id": "27067",
-            "name": "Phường 15",
-            "type": "Phường"
-          },
-          {
-            "id": "27070",
-            "name": "Phường 10",
-            "type": "Phường"
+            "name": "Phường Cầu Kiệu",
+            "type": "phuong"
           },
           {
             "id": "27073",
-            "name": "Phường 11",
-            "type": "Phường"
-          },
-          {
-            "id": "27076",
-            "name": "Phường 17",
-            "type": "Phường"
-          },
-          {
-            "id": "27079",
-            "name": "Phường 14",
-            "type": "Phường"
-          },
-          {
-            "id": "27082",
-            "name": "Phường 12",
-            "type": "Phường"
-          },
-          {
-            "id": "27085",
-            "name": "Phường 13",
-            "type": "Phường"
-          }
-        ]
-      },
-      {
-        "id": "769",
-        "name": "Quận 2",
-        "type": "Quận",
-        "districts": [
-          {
-            "id": "27088",
-            "name": "Phường Thảo Điền",
-            "type": "Phường"
-          },
-          {
-            "id": "27091",
-            "name": "Phường An Phú",
-            "type": "Phường"
+            "name": "Phường Phú Nhuận",
+            "type": "phuong"
           },
           {
             "id": "27094",
-            "name": "Phường Bình An",
-            "type": "Phường"
+            "name": "Phường An Khánh",
+            "type": "phuong"
           },
           {
             "id": "27097",
-            "name": "Phường Bình Trưng Đông",
-            "type": "Phường"
-          },
-          {
-            "id": "27100",
-            "name": "Phường Bình Trưng Tây",
-            "type": "Phường"
-          },
-          {
-            "id": "27103",
-            "name": "Phường Bình Khánh",
-            "type": "Phường"
-          },
-          {
-            "id": "27106",
-            "name": "Phường An Khánh",
-            "type": "Phường"
-          },
-          {
-            "id": "27109",
-            "name": "Phường Cát Lái",
-            "type": "Phường"
+            "name": "Phường Bình Trưng",
+            "type": "phuong"
           },
           {
             "id": "27112",
-            "name": "Phường Thạnh Mỹ Lợi",
-            "type": "Phường"
-          },
-          {
-            "id": "27115",
-            "name": "Phường An Lợi Đông",
-            "type": "Phường"
-          },
-          {
-            "id": "27118",
-            "name": "Phường Thủ Thiêm",
-            "type": "Phường"
-          }
-        ]
-      },
-      {
-        "id": "770",
-        "name": "Quận 3",
-        "type": "Quận",
-        "districts": [
-          {
-            "id": "27121",
-            "name": "Phường 08",
-            "type": "Phường"
-          },
-          {
-            "id": "27124",
-            "name": "Phường 07",
-            "type": "Phường"
-          },
-          {
-            "id": "27127",
-            "name": "Phường 14",
-            "type": "Phường"
-          },
-          {
-            "id": "27130",
-            "name": "Phường 12",
-            "type": "Phường"
-          },
-          {
-            "id": "27133",
-            "name": "Phường 11",
-            "type": "Phường"
-          },
-          {
-            "id": "27136",
-            "name": "Phường 13",
-            "type": "Phường"
+            "name": "Phường Cát Lái",
+            "type": "phuong"
           },
           {
             "id": "27139",
-            "name": "Phường 06",
-            "type": "Phường"
+            "name": "Phường Xuân Hòa",
+            "type": "phuong"
           },
           {
             "id": "27142",
-            "name": "Phường 09",
-            "type": "Phường"
-          },
-          {
-            "id": "27145",
-            "name": "Phường 10",
-            "type": "Phường"
-          },
-          {
-            "id": "27148",
-            "name": "Phường 04",
-            "type": "Phường"
-          },
-          {
-            "id": "27151",
-            "name": "Phường 05",
-            "type": "Phường"
+            "name": "Phường Nhiêu Lộc",
+            "type": "phuong"
           },
           {
             "id": "27154",
-            "name": "Phường 03",
-            "type": "Phường"
+            "name": "Phường Bàn Cờ",
+            "type": "phuong"
           },
-          {
-            "id": "27157",
-            "name": "Phường 02",
-            "type": "Phường"
-          },
-          {
-            "id": "27160",
-            "name": "Phường 01",
-            "type": "Phường"
-          }
-        ]
-      },
-      {
-        "id": "771",
-        "name": "Quận 10",
-        "type": "Quận",
-        "districts": [
           {
             "id": "27163",
-            "name": "Phường 15",
-            "type": "Phường"
-          },
-          {
-            "id": "27166",
-            "name": "Phường 13",
-            "type": "Phường"
+            "name": "Phường Hòa Hưng",
+            "type": "phuong"
           },
           {
             "id": "27169",
-            "name": "Phường 14",
-            "type": "Phường"
-          },
-          {
-            "id": "27172",
-            "name": "Phường 12",
-            "type": "Phường"
-          },
-          {
-            "id": "27175",
-            "name": "Phường 11",
-            "type": "Phường"
-          },
-          {
-            "id": "27178",
-            "name": "Phường 10",
-            "type": "Phường"
-          },
-          {
-            "id": "27181",
-            "name": "Phường 09",
-            "type": "Phường"
-          },
-          {
-            "id": "27184",
-            "name": "Phường 01",
-            "type": "Phường"
-          },
-          {
-            "id": "27187",
-            "name": "Phường 08",
-            "type": "Phường"
+            "name": "Phường Diên Hồng",
+            "type": "phuong"
           },
           {
             "id": "27190",
-            "name": "Phường 02",
-            "type": "Phường"
-          },
-          {
-            "id": "27193",
-            "name": "Phường 04",
-            "type": "Phường"
-          },
-          {
-            "id": "27196",
-            "name": "Phường 07",
-            "type": "Phường"
-          },
-          {
-            "id": "27199",
-            "name": "Phường 05",
-            "type": "Phường"
-          },
-          {
-            "id": "27202",
-            "name": "Phường 06",
-            "type": "Phường"
-          },
-          {
-            "id": "27205",
-            "name": "Phường 03",
-            "type": "Phường"
-          }
-        ]
-      },
-      {
-        "id": "772",
-        "name": "Quận 11",
-        "type": "Quận",
-        "districts": [
-          {
-            "id": "27208",
-            "name": "Phường 15",
-            "type": "Phường"
+            "name": "Phường Vườn Lài",
+            "type": "phuong"
           },
           {
             "id": "27211",
-            "name": "Phường 05",
-            "type": "Phường"
-          },
-          {
-            "id": "27214",
-            "name": "Phường 14",
-            "type": "Phường"
-          },
-          {
-            "id": "27217",
-            "name": "Phường 11",
-            "type": "Phường"
-          },
-          {
-            "id": "27220",
-            "name": "Phường 03",
-            "type": "Phường"
-          },
-          {
-            "id": "27223",
-            "name": "Phường 10",
-            "type": "Phường"
+            "name": "Phường Hòa Bình",
+            "type": "phuong"
           },
           {
             "id": "27226",
-            "name": "Phường 13",
-            "type": "Phường"
-          },
-          {
-            "id": "27229",
-            "name": "Phường 08",
-            "type": "Phường"
+            "name": "Phường Phú Thọ",
+            "type": "phuong"
           },
           {
             "id": "27232",
-            "name": "Phường 09",
-            "type": "Phường"
-          },
-          {
-            "id": "27235",
-            "name": "Phường 12",
-            "type": "Phường"
+            "name": "Phường Bình Thới",
+            "type": "phuong"
           },
           {
             "id": "27238",
-            "name": "Phường 07",
-            "type": "Phường"
-          },
-          {
-            "id": "27241",
-            "name": "Phường 06",
-            "type": "Phường"
-          },
-          {
-            "id": "27244",
-            "name": "Phường 04",
-            "type": "Phường"
-          },
-          {
-            "id": "27247",
-            "name": "Phường 01",
-            "type": "Phường"
-          },
-          {
-            "id": "27250",
-            "name": "Phường 02",
-            "type": "Phường"
-          },
-          {
-            "id": "27253",
-            "name": "Phường 16",
-            "type": "Phường"
-          }
-        ]
-      },
-      {
-        "id": "773",
-        "name": "Quận 4",
-        "type": "Quận",
-        "districts": [
-          {
-            "id": "27256",
-            "name": "Phường 12",
-            "type": "Phường"
+            "name": "Phường Minh Phụng",
+            "type": "phuong"
           },
           {
             "id": "27259",
-            "name": "Phường 13",
-            "type": "Phường"
-          },
-          {
-            "id": "27262",
-            "name": "Phường 09",
-            "type": "Phường"
+            "name": "Phường Xóm Chiếu",
+            "type": "phuong"
           },
           {
             "id": "27265",
-            "name": "Phường 06",
-            "type": "Phường"
-          },
-          {
-            "id": "27268",
-            "name": "Phường 08",
-            "type": "Phường"
-          },
-          {
-            "id": "27271",
-            "name": "Phường 10",
-            "type": "Phường"
-          },
-          {
-            "id": "27274",
-            "name": "Phường 05",
-            "type": "Phường"
-          },
-          {
-            "id": "27277",
-            "name": "Phường 18",
-            "type": "Phường"
-          },
-          {
-            "id": "27280",
-            "name": "Phường 14",
-            "type": "Phường"
-          },
-          {
-            "id": "27283",
-            "name": "Phường 04",
-            "type": "Phường"
+            "name": "Phường Khánh Hội",
+            "type": "phuong"
           },
           {
             "id": "27286",
-            "name": "Phường 03",
-            "type": "Phường"
+            "name": "Phường Vĩnh Hội",
+            "type": "phuong"
           },
-          {
-            "id": "27289",
-            "name": "Phường 16",
-            "type": "Phường"
-          },
-          {
-            "id": "27292",
-            "name": "Phường 02",
-            "type": "Phường"
-          },
-          {
-            "id": "27295",
-            "name": "Phường 15",
-            "type": "Phường"
-          },
-          {
-            "id": "27298",
-            "name": "Phường 01",
-            "type": "Phường"
-          }
-        ]
-      },
-      {
-        "id": "774",
-        "name": "Quận 5",
-        "type": "Quận",
-        "districts": [
           {
             "id": "27301",
-            "name": "Phường 04",
-            "type": "Phường"
-          },
-          {
-            "id": "27304",
-            "name": "Phường 09",
-            "type": "Phường"
-          },
-          {
-            "id": "27307",
-            "name": "Phường 03",
-            "type": "Phường"
-          },
-          {
-            "id": "27310",
-            "name": "Phường 12",
-            "type": "Phường"
-          },
-          {
-            "id": "27313",
-            "name": "Phường 02",
-            "type": "Phường"
+            "name": "Phường Chợ Quán",
+            "type": "phuong"
           },
           {
             "id": "27316",
-            "name": "Phường 08",
-            "type": "Phường"
-          },
-          {
-            "id": "27319",
-            "name": "Phường 15",
-            "type": "Phường"
-          },
-          {
-            "id": "27322",
-            "name": "Phường 07",
-            "type": "Phường"
-          },
-          {
-            "id": "27325",
-            "name": "Phường 01",
-            "type": "Phường"
-          },
-          {
-            "id": "27328",
-            "name": "Phường 11",
-            "type": "Phường"
-          },
-          {
-            "id": "27331",
-            "name": "Phường 14",
-            "type": "Phường"
-          },
-          {
-            "id": "27334",
-            "name": "Phường 05",
-            "type": "Phường"
-          },
-          {
-            "id": "27337",
-            "name": "Phường 06",
-            "type": "Phường"
-          },
-          {
-            "id": "27340",
-            "name": "Phường 10",
-            "type": "Phường"
+            "name": "Phường An Đông",
+            "type": "phuong"
           },
           {
             "id": "27343",
-            "name": "Phường 13",
-            "type": "Phường"
-          }
-        ]
-      },
-      {
-        "id": "775",
-        "name": "Quận 6",
-        "type": "Quận",
-        "districts": [
-          {
-            "id": "27346",
-            "name": "Phường 14",
-            "type": "Phường"
+            "name": "Phường Chợ Lớn",
+            "type": "phuong"
           },
           {
             "id": "27349",
-            "name": "Phường 13",
-            "type": "Phường"
-          },
-          {
-            "id": "27352",
-            "name": "Phường 09",
-            "type": "Phường"
-          },
-          {
-            "id": "27355",
-            "name": "Phường 06",
-            "type": "Phường"
-          },
-          {
-            "id": "27358",
-            "name": "Phường 12",
-            "type": "Phường"
-          },
-          {
-            "id": "27361",
-            "name": "Phường 05",
-            "type": "Phường"
+            "name": "Phường Phú Lâm",
+            "type": "phuong"
           },
           {
             "id": "27364",
-            "name": "Phường 11",
-            "type": "Phường"
+            "name": "Phường Bình Phú",
+            "type": "phuong"
           },
           {
             "id": "27367",
-            "name": "Phường 02",
-            "type": "Phường"
-          },
-          {
-            "id": "27370",
-            "name": "Phường 01",
-            "type": "Phường"
+            "name": "Phường Bình Tây",
+            "type": "phuong"
           },
           {
             "id": "27373",
-            "name": "Phường 04",
-            "type": "Phường"
-          },
-          {
-            "id": "27376",
-            "name": "Phường 08",
-            "type": "Phường"
-          },
-          {
-            "id": "27379",
-            "name": "Phường 03",
-            "type": "Phường"
-          },
-          {
-            "id": "27382",
-            "name": "Phường 07",
-            "type": "Phường"
-          },
-          {
-            "id": "27385",
-            "name": "Phường 10",
-            "type": "Phường"
-          }
-        ]
-      },
-      {
-        "id": "776",
-        "name": "Quận 8",
-        "type": "Quận",
-        "districts": [
-          {
-            "id": "27388",
-            "name": "Phường 08",
-            "type": "Phường"
-          },
-          {
-            "id": "27391",
-            "name": "Phường 02",
-            "type": "Phường"
-          },
-          {
-            "id": "27394",
-            "name": "Phường 01",
-            "type": "Phường"
-          },
-          {
-            "id": "27397",
-            "name": "Phường 03",
-            "type": "Phường"
-          },
-          {
-            "id": "27400",
-            "name": "Phường 11",
-            "type": "Phường"
-          },
-          {
-            "id": "27403",
-            "name": "Phường 09",
-            "type": "Phường"
-          },
-          {
-            "id": "27406",
-            "name": "Phường 10",
-            "type": "Phường"
-          },
-          {
-            "id": "27409",
-            "name": "Phường 04",
-            "type": "Phường"
-          },
-          {
-            "id": "27412",
-            "name": "Phường 13",
-            "type": "Phường"
-          },
-          {
-            "id": "27415",
-            "name": "Phường 12",
-            "type": "Phường"
+            "name": "Phường Bình Tiên",
+            "type": "phuong"
           },
           {
             "id": "27418",
-            "name": "Phường 05",
-            "type": "Phường"
-          },
-          {
-            "id": "27421",
-            "name": "Phường 14",
-            "type": "Phường"
+            "name": "Phường Chánh Hưng",
+            "type": "phuong"
           },
           {
             "id": "27424",
-            "name": "Phường 06",
-            "type": "Phường"
+            "name": "Phường Bình Đông",
+            "type": "phuong"
           },
           {
             "id": "27427",
-            "name": "Phường 15",
-            "type": "Phường"
-          },
-          {
-            "id": "27430",
-            "name": "Phường 16",
-            "type": "Phường"
-          },
-          {
-            "id": "27433",
-            "name": "Phường 07",
-            "type": "Phường"
-          }
-        ]
-      },
-      {
-        "id": "777",
-        "name": "Quận Bình Tân",
-        "type": "Quận",
-        "districts": [
-          {
-            "id": "27436",
-            "name": "Phường Bình Hưng Hòa",
-            "type": "Phường"
+            "name": "Phường Phú Định",
+            "type": "phuong"
           },
           {
             "id": "27439",
-            "name": "Phường Bình Hưng Hoà A",
-            "type": "Phường"
+            "name": "Phường Bình Hưng Hòa",
+            "type": "phuong"
           },
           {
             "id": "27442",
-            "name": "Phường Bình Hưng Hoà B",
-            "type": "Phường"
-          },
-          {
-            "id": "27445",
-            "name": "Phường Bình Trị Đông",
-            "type": "Phường"
+            "name": "Phường Bình Tân",
+            "type": "phuong"
           },
           {
             "id": "27448",
-            "name": "Phường Bình Trị Đông A",
-            "type": "Phường"
-          },
-          {
-            "id": "27451",
-            "name": "Phường Bình Trị Đông B",
-            "type": "Phường"
-          },
-          {
-            "id": "27454",
-            "name": "Phường Tân Tạo",
-            "type": "Phường"
+            "name": "Phường Bình Trị Đông",
+            "type": "phuong"
           },
           {
             "id": "27457",
-            "name": "Phường Tân Tạo A",
-            "type": "Phường"
+            "name": "Phường Tân Tạo",
+            "type": "phuong"
           },
           {
             "id": "27460",
-            "name": "Phường  An Lạc",
-            "type": "Phường"
-          },
-          {
-            "id": "27463",
-            "name": "Phường An Lạc A",
-            "type": "Phường"
-          }
-        ]
-      },
-      {
-        "id": "778",
-        "name": "Quận 7",
-        "type": "Quận",
-        "districts": [
-          {
-            "id": "27466",
-            "name": "Phường Tân Thuận Đông",
-            "type": "Phường"
-          },
-          {
-            "id": "27469",
-            "name": "Phường Tân Thuận Tây",
-            "type": "Phường"
-          },
-          {
-            "id": "27472",
-            "name": "Phường Tân Kiểng",
-            "type": "Phường"
+            "name": "Phường An Lạc",
+            "type": "phuong"
           },
           {
             "id": "27475",
             "name": "Phường Tân Hưng",
-            "type": "Phường"
+            "type": "phuong"
           },
           {
             "id": "27478",
-            "name": "Phường Bình Thuận",
-            "type": "Phường"
-          },
-          {
-            "id": "27481",
-            "name": "Phường Tân Quy",
-            "type": "Phường"
+            "name": "Phường Tân Thuận",
+            "type": "phuong"
           },
           {
             "id": "27484",
             "name": "Phường Phú Thuận",
-            "type": "Phường"
+            "type": "phuong"
           },
           {
             "id": "27487",
-            "name": "Phường Tân Phú",
-            "type": "Phường"
+            "name": "Phường Tân Mỹ",
+            "type": "phuong"
           },
-          {
-            "id": "27490",
-            "name": "Phường Tân Phong",
-            "type": "Phường"
-          },
-          {
-            "id": "27493",
-            "name": "Phường Phú Mỹ",
-            "type": "Phường"
-          }
-        ]
-      },
-      {
-        "id": "783",
-        "name": "Huyện Củ Chi",
-        "type": "Huyện",
-        "districts": [
           {
             "id": "27496",
-            "name": "Thị trấn Củ Chi",
-            "type": "Thị trấn"
-          },
-          {
-            "id": "27499",
-            "name": "Xã Phú Mỹ Hưng",
-            "type": "Xã"
-          },
-          {
-            "id": "27502",
-            "name": "Xã An Phú",
-            "type": "Xã"
-          },
-          {
-            "id": "27505",
-            "name": "Xã Trung Lập Thượng",
-            "type": "Xã"
+            "name": "Xã Tân An Hội",
+            "type": "xa"
           },
           {
             "id": "27508",
             "name": "Xã An Nhơn Tây",
-            "type": "Xã"
+            "type": "xa"
           },
           {
             "id": "27511",
             "name": "Xã Nhuận Đức",
-            "type": "Xã"
-          },
-          {
-            "id": "27514",
-            "name": "Xã Phạm Văn Cội",
-            "type": "Xã"
-          },
-          {
-            "id": "27517",
-            "name": "Xã Phú Hòa Đông",
-            "type": "Xã"
-          },
-          {
-            "id": "27520",
-            "name": "Xã Trung Lập Hạ",
-            "type": "Xã"
-          },
-          {
-            "id": "27523",
-            "name": "Xã Trung An",
-            "type": "Xã"
+            "type": "xa"
           },
           {
             "id": "27526",
-            "name": "Xã Phước Thạnh",
-            "type": "Xã"
-          },
-          {
-            "id": "27529",
-            "name": "Xã Phước Hiệp",
-            "type": "Xã"
-          },
-          {
-            "id": "27532",
-            "name": "Xã Tân An Hội",
-            "type": "Xã"
-          },
-          {
-            "id": "27535",
-            "name": "Xã Phước Vĩnh An",
-            "type": "Xã"
-          },
-          {
-            "id": "27538",
             "name": "Xã Thái Mỹ",
-            "type": "Xã"
+            "type": "xa"
           },
           {
             "id": "27541",
-            "name": "Xã Tân Thạnh Tây",
-            "type": "Xã"
+            "name": "Xã Phú Hòa Đông",
+            "type": "xa"
           },
           {
             "id": "27544",
-            "name": "Xã Hòa Phú",
-            "type": "Xã"
-          },
-          {
-            "id": "27547",
-            "name": "Xã Tân Thạnh Đông",
-            "type": "Xã"
-          },
-          {
-            "id": "27550",
             "name": "Xã Bình Mỹ",
-            "type": "Xã"
+            "type": "xa"
           },
           {
             "id": "27553",
-            "name": "Xã Tân Phú Trung",
-            "type": "Xã"
+            "name": "Xã Củ Chi",
+            "type": "xa"
           },
-          {
-            "id": "27556",
-            "name": "Xã Tân Thông Hội",
-            "type": "Xã"
-          }
-        ]
-      },
-      {
-        "id": "784",
-        "name": "Huyện Hóc Môn",
-        "type": "Huyện",
-        "districts": [
           {
             "id": "27559",
-            "name": "Thị trấn Hóc Môn",
-            "type": "Thị trấn"
-          },
-          {
-            "id": "27562",
-            "name": "Xã Tân Hiệp",
-            "type": "Xã"
-          },
-          {
-            "id": "27565",
-            "name": "Xã Nhị Bình",
-            "type": "Xã"
+            "name": "Xã Hóc Môn",
+            "type": "xa"
           },
           {
             "id": "27568",
             "name": "Xã Đông Thạnh",
-            "type": "Xã"
-          },
-          {
-            "id": "27571",
-            "name": "Xã Tân Thới Nhì",
-            "type": "Xã"
-          },
-          {
-            "id": "27574",
-            "name": "Xã Thới Tam Thôn",
-            "type": "Xã"
+            "type": "xa"
           },
           {
             "id": "27577",
             "name": "Xã Xuân Thới Sơn",
-            "type": "Xã"
-          },
-          {
-            "id": "27580",
-            "name": "Xã Tân Xuân",
-            "type": "Xã"
-          },
-          {
-            "id": "27583",
-            "name": "Xã Xuân Thới Đông",
-            "type": "Xã"
-          },
-          {
-            "id": "27586",
-            "name": "Xã Trung Chánh",
-            "type": "Xã"
-          },
-          {
-            "id": "27589",
-            "name": "Xã Xuân Thới Thượng",
-            "type": "Xã"
+            "type": "xa"
           },
           {
             "id": "27592",
             "name": "Xã Bà Điểm",
-            "type": "Xã"
-          }
-        ]
-      },
-      {
-        "id": "785",
-        "name": "Huyện Bình Chánh",
-        "type": "Huyện",
-        "districts": [
-          {
-            "id": "27595",
-            "name": "Thị trấn Tân Túc",
-            "type": "Thị trấn"
+            "type": "xa"
           },
           {
-            "id": "27598",
-            "name": "Xã Phạm Văn Hai",
-            "type": "Xã"
+            "id": "27595",
+            "name": "Xã Tân Nhựt",
+            "type": "xa"
           },
           {
             "id": "27601",
-            "name": "Xã Vĩnh Lộc A",
-            "type": "Xã"
+            "name": "Xã Vĩnh Lộc",
+            "type": "xa"
           },
           {
             "id": "27604",
-            "name": "Xã Vĩnh Lộc B",
-            "type": "Xã"
-          },
-          {
-            "id": "27607",
-            "name": "Xã Bình Lợi",
-            "type": "Xã"
+            "name": "Xã Tân Vĩnh Lộc",
+            "type": "xa"
           },
           {
             "id": "27610",
-            "name": "Xã Lê Minh Xuân",
-            "type": "Xã"
-          },
-          {
-            "id": "27613",
-            "name": "Xã Tân Nhựt",
-            "type": "Xã"
-          },
-          {
-            "id": "27616",
-            "name": "Xã Tân Kiên",
-            "type": "Xã"
+            "name": "Xã Bình Lợi",
+            "type": "xa"
           },
           {
             "id": "27619",
             "name": "Xã Bình Hưng",
-            "type": "Xã"
-          },
-          {
-            "id": "27622",
-            "name": "Xã Phong Phú",
-            "type": "Xã"
-          },
-          {
-            "id": "27625",
-            "name": "Xã An Phú Tây",
-            "type": "Xã"
+            "type": "xa"
           },
           {
             "id": "27628",
             "name": "Xã Hưng Long",
-            "type": "Xã"
-          },
-          {
-            "id": "27631",
-            "name": "Xã Đa Phước",
-            "type": "Xã"
-          },
-          {
-            "id": "27634",
-            "name": "Xã Tân Quý Tây",
-            "type": "Xã"
+            "type": "xa"
           },
           {
             "id": "27637",
             "name": "Xã Bình Chánh",
-            "type": "Xã"
-          },
-          {
-            "id": "27640",
-            "name": "Xã Quy Đức",
-            "type": "Xã"
-          }
-        ]
-      },
-      {
-        "id": "786",
-        "name": "Huyện Nhà Bè",
-        "type": "Huyện",
-        "districts": [
-          {
-            "id": "27643",
-            "name": "Thị trấn Nhà Bè",
-            "type": "Thị trấn"
-          },
-          {
-            "id": "27646",
-            "name": "Xã Phước Kiển",
-            "type": "Xã"
-          },
-          {
-            "id": "27649",
-            "name": "Xã Phước Lộc",
-            "type": "Xã"
-          },
-          {
-            "id": "27652",
-            "name": "Xã Nhơn Đức",
-            "type": "Xã"
+            "type": "xa"
           },
           {
             "id": "27655",
-            "name": "Xã Phú Xuân",
-            "type": "Xã"
+            "name": "Xã Nhà Bè",
+            "type": "xa"
           },
           {
             "id": "27658",
-            "name": "Xã Long Thới",
-            "type": "Xã"
+            "name": "Xã Hiệp Phước",
+            "type": "xa"
           },
           {
-            "id": "27661",
-            "name": "Xã Hiệp Phước",
-            "type": "Xã"
-          }
-        ]
-      },
-      {
-        "id": "787",
-        "name": "Huyện Cần Giờ",
-        "type": "Huyện",
-        "districts": [
-          {
             "id": "27664",
-            "name": "Thị trấn Cần Thạnh",
-            "type": "Thị trấn"
+            "name": "Xã Cần Giờ",
+            "type": "xa"
           },
           {
             "id": "27667",
             "name": "Xã Bình Khánh",
-            "type": "Xã"
-          },
-          {
-            "id": "27670",
-            "name": "Xã Tam Thôn Hiệp",
-            "type": "Xã"
+            "type": "xa"
           },
           {
             "id": "27673",
             "name": "Xã An Thới Đông",
-            "type": "Xã"
+            "type": "xa"
           },
           {
             "id": "27676",
             "name": "Xã Thạnh An",
-            "type": "Xã"
-          },
-          {
-            "id": "27679",
-            "name": "Xã Long Hòa",
-            "type": "Xã"
-          },
-          {
-            "id": "27682",
-            "name": "Xã Lý Nhơn",
-            "type": "Xã"
+            "type": "xa"
           }
         ]
       }
