@@ -5,6 +5,9 @@ import { seedUsers } from './seeds/user.seed.js';
 import { seedBusinessIndustries } from './seeds/business-industry.seed.js';
 import { seedBusinessTypes } from './seeds/business-type.seed.js';
 import { seedBusinesses } from './seeds/business.seed.js';
+import { seedReports } from './seeds/report.seed.js';
+import { seedReportAccidents } from './seeds/report-accident.seed.js';
+import { seedReportDetailAccidents } from './seeds/report-detail-accident.seed.js';
 
 async function runSeed() {
   try {
@@ -16,6 +19,9 @@ async function runSeed() {
     await seedBusinessIndustries(AppDataSource);
     await seedBusinessTypes(AppDataSource);
     await seedBusinesses(AppDataSource);
+    await seedReports(AppDataSource);
+    await seedReportAccidents(AppDataSource);
+    await seedReportDetailAccidents(AppDataSource);
 
     console.log('🎉 All seeders executed successfully!');
   } catch (error) {

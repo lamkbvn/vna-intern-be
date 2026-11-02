@@ -11,10 +11,11 @@ import { MailModule } from '../mail/mail.module.js';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Business, BusinessType, BusinessIndustry, User , BusinessRegistrationRequest , MailModule]),
+    TypeOrmModule.forFeature([Business, BusinessType, BusinessIndustry, User , BusinessRegistrationRequest ]),
+    MailModule
   ],
   controllers: [BusinessController],
-  providers: [BusinessService],
+  providers: [BusinessService ],
   exports: [BusinessService, TypeOrmModule],
 })
 export class BusinessModule {}

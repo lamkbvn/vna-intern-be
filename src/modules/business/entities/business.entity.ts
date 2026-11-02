@@ -7,10 +7,13 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Index,
+  OneToMany,
 } from 'typeorm';
+import type { Relation } from 'typeorm';
 
 import { BusinessType } from '../../business-types/entities/business-type.entity.js';
 import { BusinessIndustry } from '../../business-industries/entities/business-industry.entity.js';
+import { Report } from '../../report/entity/report.entity.js';
 
 @Entity('businesses')
 @Index(['taxCode'], { unique: true })
@@ -149,6 +152,12 @@ export class Business {
 
   @Column({ name: 'is_active', type: 'boolean', default: true })
   isActive: boolean;
+
+  @OneToMany(
+    () => Report,
+    (report) => report.business,
+  )
+  reports: Relation<Report[]>;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
