@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { Business } from '../business/entities/business.entity.js';
 import { BusinessType } from '../business-types/entities/business-type.entity.js';
+import { BusinessIndustry } from '../business-industries/entities/business-industry.entity.js';
 
 import { Report } from './entity/report.entity.js';
 import { ReportAccident } from './entity/report-accident.entity.js';
@@ -17,6 +18,7 @@ import { ReportService } from './report.service.js';
     TypeOrmModule.forFeature([
       Business,
       BusinessType,
+      BusinessIndustry,
       Report,
       ReportAccident,
       ReportDetailAccident,
