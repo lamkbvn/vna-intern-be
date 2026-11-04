@@ -85,7 +85,7 @@ export class Report {
         () => ReportDetailAccident,
         (detail) => detail.report,
     )
-    accidentDetails: Relation<ReportDetailAccident>;
+    accidentDetails: Relation<ReportDetailAccident[]>;
 
     @CreateDateColumn({
         name: 'created_at',
