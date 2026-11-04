@@ -26,10 +26,18 @@ import { SaveStep2AccidentDto } from './dto/save-step2-accident.dto.js';
 import { SaveStep2DetailDto } from './dto/save-step2-detail.dto.js';
 import { SaveStep3AccidentDto } from './dto/save-step3-accident.dto.js';
 import { QueryMyReportsDto } from './dto/query-my-reports.dto.js';
+import { GetReportsByYearDto } from './dto/get-reports-by-year.dto.js';
 
 @Controller(['report', 'reports'])
 export class ReportController {
-  constructor(private readonly reportService: ReportService) {}
+  constructor(private readonly reportService: ReportService) { }
+
+  @Get('by-year')
+  async getReportsByYear(
+    @Query() dto: GetReportsByYearDto,
+  ) {
+    return this.reportService.getReportsByYear(dto);
+  }
 
   /**
    * GET /reports/overview?year=2026

@@ -4,6 +4,7 @@ import { Business } from '../../business/entities/business.entity.js';
 import { Column, CreateDateColumn, Entity, Index, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
 import type { Relation } from 'typeorm';
+import { ReportConfig } from '../../report-config/report-config.entity.js';
 
 export enum ReportStatus {
     REPORTING = 'reporting',
@@ -86,6 +87,22 @@ export class Report {
         (detail) => detail.report,
     )
     accidentDetails: Relation<ReportDetailAccident[]>;
+
+    @ManyToOne(
+        () => ReportConfig,
+        (reportConfig) => reportConfig.reports,
+        {
+            nullable: false,
+            onDelete: 'RESTRICT',
+        },
+    )
+    @JoinColumn({
+        name: 'report_config_id',
+        referencedColumnName: 'id',
+        foreignKeyConstraintName: 'fk_report_report_config',
+    })
+    reportConfig: Relation<ReportConfig>;
+
 
     @CreateDateColumn({
         name: 'created_at',

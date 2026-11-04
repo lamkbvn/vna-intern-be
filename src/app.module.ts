@@ -13,6 +13,7 @@ import { BusinessIndustriesModule } from './modules/business-industries/business
 import { BusinessTypesModule } from './modules/business-types/business-types.module.js';
 import { UploadModule } from './modules/upload/upload.module.js';
 import { ReportModule } from './modules/report/report.module.js';
+import { ReportConfigModule } from './modules/report-config/report-config.module.js';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { ReportModule } from './modules/report/report.module.js';
     BusinessTypesModule,
     UploadModule,
     ReportModule,
+    ReportConfigModule,
   ],
   controllers: [AppController, CategoryController],
   providers: [AppService, CategoryService],

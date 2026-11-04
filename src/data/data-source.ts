@@ -8,6 +8,7 @@ import { BusinessRegistrationRequest } from '../modules/business/entities/busine
 import { ReportDetailAccident } from '../modules/report/entity/report-detail-accident.entity.js';
 import { ReportAccident } from '../modules/report/entity/report-accident.entity.js';
 import { Report } from '../modules/report/entity/report.entity.js';
+import { ReportConfig } from '../modules/report-config/report-config.entity.js';
 
 export default new DataSource({
   type: 'postgres',
@@ -18,7 +19,7 @@ export default new DataSource({
   database: process.env.DB_DATABASE,
 
   // Các entity của hệ thống
-  entities: [User, BusinessIndustry, BusinessType, Business , BusinessRegistrationRequest , Report , ReportAccident , ReportDetailAccident],
+  entities: [User, BusinessIndustry, BusinessType, Business , BusinessRegistrationRequest , Report , ReportAccident , ReportDetailAccident ,ReportConfig],
   migrations: ['src/migrations/*.ts'],
 
   synchronize: false,

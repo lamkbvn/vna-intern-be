@@ -26,6 +26,7 @@ import { SaveStep3AccidentDto } from './dto/save-step3-accident.dto.js';
 import { QueryMyReportsDto } from './dto/query-my-reports.dto.js';
 import { CurrentUserPayload } from '../../commons/decorators/current-user.decorator.js';
 import { UserRole } from '../users/user.entity.js';
+import { GetReportsByYearDto } from './dto/get-reports-by-year.dto.js';
 
 @Injectable()
 export class ReportService {
@@ -44,6 +45,49 @@ export class ReportService {
         @InjectRepository(ReportDetailAccident)
         private readonly reportDetailAccidentRepository: Repository<ReportDetailAccident>,
     ) { }
+
+    async getReportsByYear(dto: GetReportsByYearDto) {
+        const { year, pageNumber, pageSize } = dto;
+
+        const [data, total] = await this.reportRepository.findAndCount({
+            where: {
+                year,
+            },
+            relations: {
+                business: true,
+            },
+            select: {
+                id: true,
+                year: true,
+                period: true,
+                status: true,
+                totalEmployees: true,
+                totalFemaleEmployees: true,
+                totalQuyLuong: true,
+                createdAt: true,
+                updatedAt: true,
+                business: {
+                    id: true,
+                    name: true,
+                },
+            },
+            order: {
+                createdAt: 'DESC',
+            },
+            skip: (pageNumber - 1) * pageSize,
+            take: pageSize,
+        });
+
+        return {
+            data,
+            pagination: {
+                pageNumber,
+                pageSize,
+                totalItems: total,
+                totalPages: Math.ceil(total / pageSize),
+            },
+        };
+    }
 
     async getOverview(year: number, period?: ReportPeriod) {
         // 1. Lấy danh sách BusinessType đang hoạt động
@@ -606,17 +650,17 @@ export class ReportService {
             representativePhone: business.representativePhone,
             businessType: business.businessType
                 ? {
-                      id: business.businessType.id,
-                      code: business.businessType.code,
-                      name: business.businessType.name,
-                  }
+                    id: business.businessType.id,
+                    code: business.businessType.code,
+                    name: business.businessType.name,
+                }
                 : null,
             businessIndustry: business.businessIndustry
                 ? {
-                      id: business.businessIndustry.id,
-                      code: business.businessIndustry.code,
-                      name: business.businessIndustry.name,
-                  }
+                    id: business.businessIndustry.id,
+                    code: business.businessIndustry.code,
+                    name: business.businessIndustry.name,
+                }
                 : null,
         };
     }
@@ -876,17 +920,17 @@ export class ReportService {
                 representativePhone: report.business?.representativePhone,
                 businessType: report.business?.businessType
                     ? {
-                          id: report.business.businessType.id,
-                          code: report.business.businessType.code,
-                          name: report.business.businessType.name,
-                      }
+                        id: report.business.businessType.id,
+                        code: report.business.businessType.code,
+                        name: report.business.businessType.name,
+                    }
                     : null,
                 businessIndustry: report.business?.businessIndustry
                     ? {
-                          id: report.business.businessIndustry.id,
-                          code: report.business.businessIndustry.code,
-                          name: report.business.businessIndustry.name,
-                      }
+                        id: report.business.businessIndustry.id,
+                        code: report.business.businessIndustry.code,
+                        name: report.business.businessIndustry.name,
+                    }
                     : null,
             },
             accident,
