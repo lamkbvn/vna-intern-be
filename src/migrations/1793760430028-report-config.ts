@@ -5,6 +5,15 @@ export class ReportConfig1793760430028 implements MigrationInterface {
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
+      DO $$
+      BEGIN
+        IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'report_period_enum') THEN
+          CREATE TYPE "public"."report_period_enum" AS ENUM('6 months', '12 months');
+        END IF;
+      END$$;
+    `);
+
+    await queryRunner.query(`
       CREATE TABLE "report_config" (
         "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
         "year" smallint NOT NULL,
@@ -33,6 +42,10 @@ export class ReportConfig1793760430028 implements MigrationInterface {
 
     await queryRunner.query(`
       DROP TABLE IF EXISTS "report_config"
+    `);
+
+    await queryRunner.query(`
+      DROP TYPE IF EXISTS "public"."report_period_enum"
     `);
   }
 }
