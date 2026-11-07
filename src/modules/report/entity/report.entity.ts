@@ -104,6 +104,22 @@ export class Report {
     reportConfig: Relation<ReportConfig>;
 
 
+    @Column({
+        name: 'attachment_url',
+        type: 'varchar',
+        length: 500,
+        nullable: true,
+    })
+    attachmentUrl?: string;
+
+    @Column({
+        name: 'attachment_name',
+        type: 'varchar',
+        length: 255,
+        nullable: true,
+    })
+    attachmentName?: string;
+
     @CreateDateColumn({
         name: 'created_at',
     })

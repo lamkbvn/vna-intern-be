@@ -89,52 +89,11 @@ export class ReportConfigService {
 
     const savedConfig = await configRepository.save(config);
 
-    // Lấy các Report đã tồn tại trong cùng năm và kỳ báo cáo
-    const existingReports = await reportRepository.find({
-      where: {
-        year: dto.year,
-        period: dto.period,
-      },
-      relations: {
-        business: true,
-      },
-    });
-
-    const existingBusinessIds = new Set(
-      existingReports.map((report) => report.business.id),
-    );
-
-    // Chỉ tạo Report cho doanh nghiệp chưa có báo cáo
-    const newReports = businesses
-      .filter((business) => !existingBusinessIds.has(business.id))
-      .map((business) =>
-        reportRepository.create({
-          business,
-
-          // Gắn ReportConfig vừa tạo vào Report
-          reportConfig: savedConfig,
-
-          year: dto.year,
-          period: dto.period,
-          status: ReportStatus.REPORTING,
-          totalEmployees: 0,
-          totalFemaleEmployees: 0,
-          totalQuyLuong: 0,
-        }),
-      );
-
-    if (newReports.length > 0) {
-      await reportRepository.save(newReports);
-    }
-
     return {
       message: 'Tạo cấu hình báo cáo thành công.',
       data: {
         config: savedConfig,
         totalBusinesses: businesses.length,
-        totalReportsCreated: newReports.length,
-        totalReportsSkipped:
-          businesses.length - newReports.length,
       },
     };
   });

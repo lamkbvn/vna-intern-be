@@ -2,6 +2,7 @@ import {
   Controller,
   Get,
   Post,
+  Patch,
   Delete,
   Body,
   Param,
@@ -27,6 +28,7 @@ import { SaveStep2DetailDto } from './dto/save-step2-detail.dto.js';
 import { SaveStep3AccidentDto } from './dto/save-step3-accident.dto.js';
 import { QueryMyReportsDto } from './dto/query-my-reports.dto.js';
 import { GetReportsByYearDto } from './dto/get-reports-by-year.dto.js';
+import { UpdateAttachmentDto } from './dto/update-attachment.dto.js';
 
 @Controller(['report', 'reports'])
 export class ReportController {
@@ -168,6 +170,20 @@ export class ReportController {
     @CurrentUser() currentUser: CurrentUserPayload,
   ) {
     return this.reportService.getReportSummary(reportId, currentUser);
+  }
+
+  /**
+   * ĐÍNH KÈM BÁO CÁO: PATCH /reports/:reportId/attachment
+   */
+  @Patch(':reportId/attachment')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.DOANH_NGHIEP, UserRole.ADMIN, UserRole.MANAGER)
+  async updateAttachment(
+    @Param('reportId', ParseUUIDPipe) reportId: string,
+    @Body() dto: UpdateAttachmentDto,
+    @CurrentUser() currentUser: CurrentUserPayload,
+  ) {
+    return this.reportService.updateAttachment(reportId, dto, currentUser);
   }
 
   /**

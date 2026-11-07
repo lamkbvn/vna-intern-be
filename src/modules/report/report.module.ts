@@ -9,6 +9,7 @@ import { BusinessIndustry } from '../business-industries/entities/business-indus
 import { Report } from './entity/report.entity.js';
 import { ReportAccident } from './entity/report-accident.entity.js';
 import { ReportDetailAccident } from './entity/report-detail-accident.entity.js';
+import { ReportConfig } from '../report-config/report-config.entity.js';
 
 import { ReportController } from './report.controller.js';
 import { ReportService } from './report.service.js';
@@ -22,6 +23,7 @@ import { ReportService } from './report.service.js';
       Report,
       ReportAccident,
       ReportDetailAccident,
+      ReportConfig,
     ]),
   ],
 

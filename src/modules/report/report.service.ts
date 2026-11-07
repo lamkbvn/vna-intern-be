@@ -19,6 +19,7 @@ import {
 
 import { ReportAccident, ReportType } from './entity/report-accident.entity.js';
 import { ReportDetailAccident } from './entity/report-detail-accident.entity.js';
+import { ReportConfig } from '../report-config/report-config.entity.js';
 import { SaveStep1Dto } from './dto/save-step1.dto.js';
 import { SaveStep2AccidentDto } from './dto/save-step2-accident.dto.js';
 import { SaveStep2DetailDto } from './dto/save-step2-detail.dto.js';
@@ -27,6 +28,7 @@ import { QueryMyReportsDto } from './dto/query-my-reports.dto.js';
 import { CurrentUserPayload } from '../../commons/decorators/current-user.decorator.js';
 import { UserRole } from '../users/user.entity.js';
 import { GetReportsByYearDto } from './dto/get-reports-by-year.dto.js';
+import { UpdateAttachmentDto } from './dto/update-attachment.dto.js';
 
 @Injectable()
 export class ReportService {
@@ -44,6 +46,8 @@ export class ReportService {
         private readonly reportAccidentRepository: Repository<ReportAccident>,
         @InjectRepository(ReportDetailAccident)
         private readonly reportDetailAccidentRepository: Repository<ReportDetailAccident>,
+        @InjectRepository(ReportConfig)
+        private readonly reportConfigRepository: Repository<ReportConfig>,
     ) { }
 
     async getReportsByYear(dto: GetReportsByYearDto) {
@@ -709,8 +713,26 @@ export class ReportService {
                 report.totalFemaleEmployees = dto.totalFemaleEmployees;
                 report.totalQuyLuong = dto.totalQuyLuong;
             } else {
+                let reportConfig: ReportConfig | null = null;
+                if (dto.configId) {
+                    reportConfig = await this.reportConfigRepository.findOne({
+                        where: { id: dto.configId },
+                    });
+                }
+                if (!reportConfig) {
+                    reportConfig = await this.reportConfigRepository.findOne({
+                        where: { year: dto.year, period: dto.period },
+                    });
+                }
+                if (!reportConfig) {
+                    reportConfig = await this.reportConfigRepository.findOne({
+                        where: { year: dto.year },
+                    });
+                }
+
                 report = this.reportRepository.create({
                     business,
+                    reportConfig: reportConfig || undefined,
                     year: dto.year,
                     period: dto.period,
                     status: ReportStatus.REPORTING,
@@ -879,6 +901,27 @@ export class ReportService {
                 (item) => item.type === ReportType.ACCIDENT2,
             ) ?? null;
 
+        const formatAccidentMoney = (acc: any) => {
+            if (!acc) return null;
+            return {
+                ...acc,
+                budgetMedical: acc.budgetMedical ? Math.round(Number(acc.budgetMedical)) : 0,
+                budgetSalary: acc.budgetSalary ? Math.round(Number(acc.budgetSalary)) : 0,
+                budgetHelp: acc.budgetHelp ? Math.round(Number(acc.budgetHelp)) : 0,
+                totalBudget: acc.totalBudget ? Math.round(Number(acc.totalBudget)) : 0,
+                totalThietHai: acc.totalThietHai ? Math.round(Number(acc.totalThietHai)) : 0,
+            };
+        };
+
+        const formattedDetails = (report.accidentDetails ?? []).map((detail) => ({
+            ...detail,
+            budgetMedical: detail.budgetMedical ? Math.round(Number(detail.budgetMedical)) : 0,
+            budgetSalary: detail.budgetSalary ? Math.round(Number(detail.budgetSalary)) : 0,
+            budgetHelp: detail.budgetHelp ? Math.round(Number(detail.budgetHelp)) : 0,
+            totalBudget: detail.totalBudget ? Math.round(Number(detail.totalBudget)) : 0,
+            totalThietHai: detail.totalThietHai ? Math.round(Number(detail.totalThietHai)) : 0,
+        }));
+
         return {
             report: {
                 id: report.id,
@@ -887,7 +930,9 @@ export class ReportService {
                 status: report.status,
                 totalEmployees: report.totalEmployees,
                 totalFemaleEmployees: report.totalFemaleEmployees,
-                totalQuyLuong: report.totalQuyLuong,
+                totalQuyLuong: report.totalQuyLuong ? Math.round(Number(report.totalQuyLuong)) : 0,
+                attachmentUrl: report.attachmentUrl,
+                attachmentName: report.attachmentName,
                 createdAt: report.createdAt,
                 updatedAt: report.updatedAt,
             },
@@ -916,9 +961,41 @@ export class ReportService {
                     }
                     : null,
             },
-            accident,
-            accidentDetails: report.accidentDetails ?? [],
-            benefitAccident,
+            accident: formatAccidentMoney(accident),
+            accidentDetails: formattedDetails,
+            benefitAccident: formatAccidentMoney(benefitAccident),
+        };
+    }
+
+    /**
+     * Cập nhật file đính kèm báo cáo
+     */
+    async updateAttachment(
+        reportId: string,
+        dto: UpdateAttachmentDto,
+        currentUser: CurrentUserPayload,
+    ) {
+        const report = await this.findReportAndVerifyAccess(reportId, currentUser);
+
+        if (report.status === ReportStatus.RECEIVED) {
+            throw new BadRequestException('Báo cáo đã tiếp nhận, không thể chỉnh sửa file đính kèm');
+        }
+
+        const url = dto.attachment_url || dto.attachmentUrl;
+        const name = dto.attachment_name || dto.attachmentName;
+
+        if (url) report.attachmentUrl = url;
+        if (name) report.attachmentName = name;
+
+        await this.reportRepository.save(report);
+
+        return {
+            message: 'Cập nhật file đính kèm thành công',
+            data: {
+                reportId: report.id,
+                attachmentUrl: report.attachmentUrl,
+                attachmentName: report.attachmentName,
+            },
         };
     }
 
@@ -932,6 +1009,10 @@ export class ReportService {
             throw new BadRequestException('Báo cáo này đã được gửi trước đó');
         }
 
+        if (!report.attachmentUrl) {
+            throw new BadRequestException('Vui lòng đính kèm file báo cáo có dấu/chữ ký trước khi nộp');
+        }
+
         report.status = ReportStatus.RECEIVED;
         await this.reportRepository.save(report);
 
@@ -943,7 +1024,7 @@ export class ReportService {
     }
 
     /**
-     * Danh sách báo cáo của doanh nghiệp
+     * Danh sách báo cáo của doanh nghiệp (Dựa trên cấu hình báo cáo report_config)
      */
     async getMyReports(
         query: QueryMyReportsDto,
@@ -954,35 +1035,114 @@ export class ReportService {
         const pageNumber = query.pageNumber || 1;
         const pageSize = query.pageSize || 10;
 
-        const qb = this.reportRepository
+        const business = await this.businessRepository.findOne({
+            where: { id: businessId },
+        });
+
+        // 1. Lấy danh sách các cấu hình báo cáo do Sở thiết lập
+        const configQb = this.reportConfigRepository.createQueryBuilder('config');
+        if (year) {
+            configQb.andWhere('config.year = :year', { year });
+        }
+        if (period) {
+            configQb.andWhere('config.period = :period', { period });
+        }
+        configQb.orderBy('config.year', 'DESC').addOrderBy('config.period', 'ASC');
+
+        const configs = await configQb.getMany();
+
+        // 2. Lấy các báo cáo đã có của doanh nghiệp
+        const reportQb = this.reportRepository
             .createQueryBuilder('report')
             .leftJoinAndSelect('report.business', 'business')
+            .leftJoinAndSelect('report.reportConfig', 'reportConfig')
             .where('business.id = :businessId', { businessId });
 
         if (year) {
-            qb.andWhere('report.year = :year', { year });
+            reportQb.andWhere('report.year = :year', { year });
         }
-
         if (period) {
-            qb.andWhere('report.period = :period', { period });
+            reportQb.andWhere('report.period = :period', { period });
+        }
+        const existingReports = await reportQb.getMany();
+
+        // 3. Kết hợp cấu hình với báo cáo thực tế của DN
+        let combinedItems: any[] = configs.map((cfg) => {
+            const report = existingReports.find(
+                (r) =>
+                    r.reportConfig?.id === cfg.id ||
+                    (r.year === cfg.year && r.period === cfg.period),
+            );
+
+            if (report) {
+                return {
+                    id: report.id,
+                    configId: cfg.id,
+                    configName: cfg.name,
+                    business: report.business || business,
+                    period: report.period,
+                    year: report.year,
+                    status: report.status, // 'reporting' | 'received'
+                    createdAt: report.createdAt,
+                    updatedAt: report.updatedAt,
+                    attachmentUrl: report.attachmentUrl,
+                    attachmentName: report.attachmentName,
+                };
+            }
+
+            // Chưa cập nhật báo cáo -> status là 'pending' (Chờ báo cáo)
+            return {
+                id: null,
+                configId: cfg.id,
+                configName: cfg.name,
+                business: business,
+                period: cfg.period,
+                year: cfg.year,
+                status: 'pending', // 'Chờ báo cáo'
+                createdAt: cfg.createdAt,
+                updatedAt: cfg.updatedAt,
+                attachmentUrl: null,
+                attachmentName: null,
+            };
+        });
+
+        // Nếu có báo cáo cũ không gắn với config nào
+        for (const rep of existingReports) {
+            const existsInCombined = combinedItems.some((ci) => ci.id === rep.id);
+            if (!existsInCombined) {
+                combinedItems.push({
+                    id: rep.id,
+                    configId: rep.reportConfig?.id || null,
+                    configName: rep.reportConfig?.name || `Báo cáo ${rep.period} năm ${rep.year}`,
+                    business: rep.business || business,
+                    period: rep.period,
+                    year: rep.year,
+                    status: rep.status,
+                    createdAt: rep.createdAt,
+                    updatedAt: rep.updatedAt,
+                    attachmentUrl: rep.attachmentUrl,
+                    attachmentName: rep.attachmentName,
+                });
+            }
         }
 
+        // Lọc theo status nếu có
         if (status) {
-            qb.andWhere('report.status = :status', { status });
+            combinedItems = combinedItems.filter((item) => item.status === status);
         }
 
-        qb.orderBy('report.createdAt', 'DESC')
-            .skip((pageNumber - 1) * pageSize)
-            .take(pageSize);
-
-        const [items, count] = await qb.getManyAndCount();
+        const count = combinedItems.length;
+        const pagedItems = combinedItems.slice(
+            (pageNumber - 1) * pageSize,
+            pageNumber * pageSize,
+        );
 
         return {
-            items,
+            items: pagedItems,
             count,
             pageNumber,
             pageSize,
-            totalPages: Math.ceil(count / pageSize),
+            totalPages: Math.ceil(count / pageSize) || 1,
         };
     }
 

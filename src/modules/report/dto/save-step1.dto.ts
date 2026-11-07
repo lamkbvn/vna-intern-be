@@ -35,4 +35,8 @@ export class SaveStep1Dto {
   @IsOptional()
   @IsUUID('4', { message: 'ID doanh nghiệp không hợp lệ' })
   businessId?: string;
+
+  @IsOptional()
+  @IsUUID('4', { message: 'ID cấu hình báo cáo không hợp lệ' })
+  configId?: string;
 }

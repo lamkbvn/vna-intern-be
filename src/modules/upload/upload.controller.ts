@@ -32,12 +32,12 @@ export class UploadController {
       }),
       limits: { fileSize: 10 * 1024 * 1024 }, // Tối đa 10MB
       fileFilter: (_req, file, cb) => {
-        const allowedExtensions = ['.png', '.jpg', '.jpeg', '.webp', '.gif', '.doc', '.docx'];
+        const allowedExtensions = ['.png', '.jpg', '.jpeg', '.webp', '.gif', '.doc', '.docx', '.pdf'];
         const ext = extname(file.originalname).toLowerCase();
         if (!allowedExtensions.includes(ext)) {
           return cb(
             new BadRequestException(
-              'Chỉ cho phép tải lên file hình ảnh (.png, .jpg, .jpeg, .webp) và tài liệu Word (.doc, .docx)',
+              'Chỉ cho phép tải lên file hình ảnh (.png, .jpg, .jpeg, .webp), tài liệu Word (.doc, .docx) và file PDF (.pdf)',
             ),
             false,
           );
@@ -55,6 +55,7 @@ export class UploadController {
     return Response.get({
       filePath,
       filename: file.filename,
+      fileName: file.originalname,
       originalName: file.originalname,
       size: file.size,
     });
