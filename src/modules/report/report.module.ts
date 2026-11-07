@@ -12,6 +12,7 @@ import { ReportDetailAccident } from './entity/report-detail-accident.entity.js'
 import { ReportConfig } from '../report-config/report-config.entity.js';
 
 import { ReportController } from './report.controller.js';
+import { SoReportController } from './so-report.controller.js';
 import { ReportService } from './report.service.js';
 
 @Module({
@@ -27,7 +28,7 @@ import { ReportService } from './report.service.js';
     ]),
   ],
 
-  controllers: [ReportController],
+  controllers: [ReportController, SoReportController],
 
   providers: [ReportService],
 

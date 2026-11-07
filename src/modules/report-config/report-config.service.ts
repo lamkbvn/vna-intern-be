@@ -3,10 +3,10 @@ import {
   BadRequestException,
   ConflictException,
   Injectable,
+  NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
-
 
 import { Business } from '../business/entities/business.entity.js';
 import {
@@ -15,6 +15,8 @@ import {
 } from '../report/entity/report.entity.js';
 
 import { CreateReportConfigDto } from './dto/create-report-config.dto.js';
+import { QueryReportConfigDto } from './dto/query-report-config.dto.js';
+import { UpdateReportConfigDto } from './dto/update-report-config.dto.js';
 import { ReportConfig } from './report-config.entity.js';
 import Response, { ResponseData } from '../../commons/response.js';
 
@@ -98,6 +100,80 @@ export class ReportConfigService {
     };
   });
 }
+
+  async findAll(dto: QueryReportConfigDto) {
+    const pageNumber = Number(dto.pageNumber) || 1;
+    const pageSize = Number(dto.pageSize) || 10;
+
+    const qb = this.reportConfigRepository.createQueryBuilder('config');
+
+    if (dto.year) {
+      qb.andWhere('config.year = :year', { year: dto.year });
+    }
+
+    if (dto.period) {
+      qb.andWhere('config.period = :period', { period: dto.period });
+    }
+
+    if (typeof dto.status === 'boolean') {
+      qb.andWhere('config.status = :status', { status: dto.status });
+    }
+
+    if (dto.search && dto.search.trim()) {
+      qb.andWhere('LOWER(config.name) LIKE :search', {
+        search: `%${dto.search.trim().toLowerCase()}%`,
+      });
+    }
+
+    qb.orderBy('config.year', 'DESC')
+      .addOrderBy('config.createdAt', 'DESC')
+      .skip((pageNumber - 1) * pageSize)
+      .take(pageSize);
+
+    const [items, total] = await qb.getManyAndCount();
+
+    return {
+      data: items,
+      pagination: {
+        pageNumber,
+        pageSize,
+        totalItems: total,
+        totalPages: Math.ceil(total / pageSize),
+      },
+    };
+  }
+
+  async findOne(id: string): Promise<ReportConfig> {
+    const config = await this.reportConfigRepository.findOne({
+      where: { id },
+    });
+
+    if (!config) {
+      throw new NotFoundException(`Không tìm thấy cấu hình báo cáo với id ${id}`);
+    }
+
+    return config;
+  }
+
+  async update(id: string, dto: UpdateReportConfigDto): Promise<ReportConfig> {
+    const config = await this.findOne(id);
+
+    const nextDateStart = dto.dateStart ? new Date(dto.dateStart) : config.dateStart;
+    const nextDateEnd = dto.dateEnd ? new Date(dto.dateEnd) : config.dateEnd;
+
+    if (nextDateStart > nextDateEnd) {
+      throw new BadRequestException('Ngày bắt đầu không được lớn hơn ngày kết thúc.');
+    }
+
+    if (dto.year !== undefined) config.year = dto.year;
+    if (dto.period !== undefined) config.period = dto.period;
+    if (dto.name !== undefined) config.name = dto.name;
+    if (dto.dateStart !== undefined) config.dateStart = new Date(dto.dateStart);
+    if (dto.dateEnd !== undefined) config.dateEnd = new Date(dto.dateEnd);
+    if (dto.status !== undefined) config.status = dto.status;
+
+    return await this.reportConfigRepository.save(config);
+  }
 
   async updateReportConfigStatus(
   id: string,

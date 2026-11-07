@@ -9,6 +9,8 @@ import { ReportConfig } from '../../report-config/report-config.entity.js';
 export enum ReportStatus {
     REPORTING = 'reporting',
     RECEIVED = 'received',
+    APPROVED = 'approved',
+    REJECTED = 'rejected',
 }
 
 export enum ReportPeriod {
@@ -119,6 +121,13 @@ export class Report {
         nullable: true,
     })
     attachmentName?: string;
+
+    @Column({
+        name: 'note',
+        type: 'text',
+        nullable: true,
+    })
+    note?: string;
 
     @CreateDateColumn({
         name: 'created_at',

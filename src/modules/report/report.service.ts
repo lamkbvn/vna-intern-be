@@ -6,7 +6,7 @@ import {
     NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 import { Business } from '../business/entities/business.entity.js';
 import { BusinessType } from '../business-types/entities/business-type.entity.js';
@@ -58,8 +58,25 @@ export class ReportService {
         const qb = this.reportRepository
             .createQueryBuilder('report')
             .leftJoinAndSelect('report.business', 'business')
-            .where('report.year = :year', { year })
-            .orderBy('report.createdAt', 'DESC')
+            .where('report.year = :year', { year });
+
+        if (dto.status) {
+            qb.andWhere('report.status = :status', { status: dto.status });
+        }
+
+        if (dto.period) {
+            qb.andWhere('report.period = :period', { period: dto.period });
+        }
+
+        if (dto.search && dto.search.trim()) {
+            const keyword = `%${dto.search.trim().toLowerCase()}%`;
+            qb.andWhere(
+                '(LOWER(business.name) LIKE :search OR LOWER(business.taxCode) LIKE :search)',
+                { search: keyword },
+            );
+        }
+
+        qb.orderBy('report.createdAt', 'DESC')
             .skip((pageNumber - 1) * pageSize)
             .take(pageSize);
 
@@ -1171,6 +1188,93 @@ export class ReportService {
 
         return {
             message: 'Đã xóa báo cáo thành công',
+        };
+    }
+
+    async approveReports(reportIds: string[]) {
+        if (!reportIds || reportIds.length === 0) {
+            return { message: 'Không có báo cáo nào được chọn', count: 0 };
+        }
+
+        const reports = await this.reportRepository.findBy({ id: In(reportIds) });
+        for (const report of reports) {
+            report.status = ReportStatus.APPROVED;
+            report.note = undefined as any;
+        }
+        await this.reportRepository.save(reports);
+
+        return {
+            message: `Đã duyệt thành công ${reports.length} báo cáo`,
+            count: reports.length,
+        };
+    }
+
+    async rejectReports(reportIds: string[], note?: string) {
+        if (!reportIds || reportIds.length === 0) {
+            return { message: 'Không có báo cáo nào được chọn', count: 0 };
+        }
+
+        const reports = await this.reportRepository.findBy({ id: In(reportIds) });
+        for (const report of reports) {
+            report.status = ReportStatus.REJECTED;
+            report.note = note || 'Báo cáo chưa hợp lệ, vui lòng chỉnh sửa và nộp lại';
+        }
+        await this.reportRepository.save(reports);
+
+        return {
+            message: `Đã từ chối ${reports.length} báo cáo`,
+            count: reports.length,
+        };
+    }
+
+    async getReportTimeline(reportId: string) {
+        const report = await this.reportRepository.findOne({
+            where: { id: reportId },
+            relations: ['business'],
+        });
+
+        if (!report) {
+            throw new NotFoundException('Không tìm thấy báo cáo');
+        }
+
+        const timeline: Array<{
+            time: string;
+            title: string;
+            reason?: string;
+            type: 'SUBMITTED' | 'APPROVED' | 'REJECTED';
+        }> = [];
+
+        timeline.push({
+            time: report.createdAt ? new Date(report.createdAt).toISOString() : new Date().toISOString(),
+            title: 'Doanh nghiệp khởi tạo báo cáo',
+            type: 'SUBMITTED',
+        });
+
+        if (report.status === ReportStatus.RECEIVED) {
+            timeline.push({
+                time: report.updatedAt ? new Date(report.updatedAt).toISOString() : new Date().toISOString(),
+                title: 'Doanh nghiệp đã nộp báo cáo (Đã tiếp nhận)',
+                type: 'SUBMITTED',
+            });
+        } else if (report.status === ReportStatus.APPROVED) {
+            timeline.push({
+                time: report.updatedAt ? new Date(report.updatedAt).toISOString() : new Date().toISOString(),
+                title: 'Sở Lao động đã duyệt báo cáo',
+                type: 'APPROVED',
+            });
+        } else if (report.status === ReportStatus.REJECTED || report.note) {
+            timeline.push({
+                time: report.updatedAt ? new Date(report.updatedAt).toISOString() : new Date().toISOString(),
+                title: 'Sở từ chối tiếp nhận báo cáo',
+                reason: report.note,
+                type: 'REJECTED',
+            });
+        }
+
+        return {
+            data: {
+                timeline,
+            },
         };
     }
 }
