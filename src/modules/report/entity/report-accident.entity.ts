@@ -96,7 +96,7 @@ export class ReportAccident {
     @Column({
         name: 'budget_medical',
         type: 'numeric',
-        precision: 15,
+        precision: 24,
         scale: 2,
         default: 0,
     })
@@ -105,7 +105,7 @@ export class ReportAccident {
     @Column({
         name: 'budget_salary',
         type: 'numeric',
-        precision: 15,
+        precision: 24,
         scale: 2,
         default: 0,
     })
@@ -114,7 +114,7 @@ export class ReportAccident {
     @Column({
         name: 'budget_help',
         type: 'numeric',
-        precision: 15,
+        precision: 24,
         scale: 2,
         default: 0,
     })
@@ -123,7 +123,7 @@ export class ReportAccident {
     @Column({
         name: 'total_budget',
         type: 'numeric',
-        precision: 15,
+        precision: 24,
         scale: 2,
         default: 0,
     })
@@ -139,7 +139,7 @@ export class ReportAccident {
     @Column({
         name: 'total_thiet_hai',
         type: 'numeric',
-        precision: 15,
+        precision: 24,
         scale: 2,
         default: 0,
     })

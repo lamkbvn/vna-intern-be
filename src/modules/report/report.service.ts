@@ -47,36 +47,19 @@ export class ReportService {
     ) { }
 
     async getReportsByYear(dto: GetReportsByYearDto) {
-        const { year, pageNumber, pageSize } = dto;
+        const year = Number(dto.year) || new Date().getFullYear();
+        const pageNumber = Number(dto.pageNumber) || 1;
+        const pageSize = Number(dto.pageSize) || 10;
 
-        const [data, total] = await this.reportRepository.findAndCount({
-            where: {
-                year,
-            },
-            relations: {
-                business: true,
-            },
-            select: {
-                id: true,
-                year: true,
-                period: true,
-                status: true,
-                totalEmployees: true,
-                totalFemaleEmployees: true,
-                totalQuyLuong: true,
-                createdAt: true,
-                updatedAt: true,
-                business: {
-                    id: true,
-                    name: true,
-                },
-            },
-            order: {
-                createdAt: 'DESC',
-            },
-            skip: (pageNumber - 1) * pageSize,
-            take: pageSize,
-        });
+        const qb = this.reportRepository
+            .createQueryBuilder('report')
+            .leftJoinAndSelect('report.business', 'business')
+            .where('report.year = :year', { year })
+            .orderBy('report.createdAt', 'DESC')
+            .skip((pageNumber - 1) * pageSize)
+            .take(pageSize);
+
+        const [data, total] = await qb.getManyAndCount();
 
         return {
             data,

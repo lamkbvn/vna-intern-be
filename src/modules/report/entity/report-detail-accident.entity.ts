@@ -84,19 +84,19 @@ export class ReportDetailAccident {
 
     @Column({
         name: 'yeu_to_chan_thuong',
-        type: 'enum',
-        enum: YeuToChanThuong,
-        enumName: 'yeu_to_chan_thuong_enum',
+        type: 'varchar',
+        length: 255,
+        nullable: true,
     })
-    yeuToChanThuong: YeuToChanThuong;
+    yeuToChanThuong: string;
 
     @Column({
         name: 'nghe_nghiep',
-        type: 'enum',
-        enum: NgheNghiep,
-        enumName: 'nghe_nghiep_enum',
+        type: 'varchar',
+        length: 255,
+        nullable: true,
     })
-    ngheNghiep: NgheNghiep;
+    ngheNghiep: string;
 
     // 1. Thống kê số người bị tai nạn
 
@@ -129,7 +129,7 @@ export class ReportDetailAccident {
     @Column({
         name: 'budget_medical',
         type: 'numeric',
-        precision: 15,
+        precision: 24,
         scale: 2,
         default: 0,
     })
@@ -138,7 +138,7 @@ export class ReportDetailAccident {
     @Column({
         name: 'budget_salary',
         type: 'numeric',
-        precision: 15,
+        precision: 24,
         scale: 2,
         default: 0,
     })
@@ -147,7 +147,7 @@ export class ReportDetailAccident {
     @Column({
         name: 'budget_help',
         type: 'numeric',
-        precision: 15,
+        precision: 24,
         scale: 2,
         default: 0,
     })
@@ -156,7 +156,7 @@ export class ReportDetailAccident {
     @Column({
         name: 'total_budget',
         type: 'numeric',
-        precision: 15,
+        precision: 24,
         scale: 2,
         default: 0,
     })
@@ -172,7 +172,7 @@ export class ReportDetailAccident {
     @Column({
         name: 'total_thiet_hai',
         type: 'numeric',
-        precision: 15,
+        precision: 24,
         scale: 2,
         default: 0,
     })

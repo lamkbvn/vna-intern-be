@@ -73,7 +73,7 @@ export class Report {
     @Column({
         name: 'total_quy_luong',
         type: 'numeric',
-        precision: 15,
+        precision: 24,
         scale: 2,
         default: 0,
     })

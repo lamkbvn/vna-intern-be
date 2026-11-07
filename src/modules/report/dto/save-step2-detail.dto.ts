@@ -1,19 +1,19 @@
-import { IsArray, IsEnum, IsInt, IsNotEmpty, IsNumber, IsOptional, Min, ValidateNested } from 'class-validator';
+import { IsArray, IsEnum, IsInt, IsNotEmpty, IsNumber, IsOptional, IsString, Min, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
-import { NgheNghiep, NguyenNhanTaiNan, YeuToChanThuong } from '../entity/report-detail-accident.entity.js';
+import { NguyenNhanTaiNan } from '../entity/report-detail-accident.entity.js';
 
 export class ReportDetailItemDto {
   @IsEnum(NguyenNhanTaiNan, { message: 'Nguyên nhân tai nạn lao động không hợp lệ' })
   @IsNotEmpty({ message: 'Nguyên nhân tai nạn lao động không được để trống' })
   nguyenNhanTaiNan: NguyenNhanTaiNan;
 
-  @IsEnum(YeuToChanThuong, { message: 'Yếu tố chấn thương không hợp lệ' })
+  @IsString({ message: 'Yếu tố chấn thương phải là chuỗi ký tự' })
   @IsNotEmpty({ message: 'Yếu tố chấn thương không được để trống' })
-  yeuToChanThuong: YeuToChanThuong;
+  yeuToChanThuong: string;
 
-  @IsEnum(NgheNghiep, { message: 'Nghề nghiệp không hợp lệ' })
+  @IsString({ message: 'Nghề nghiệp phải là chuỗi ký tự' })
   @IsNotEmpty({ message: 'Nghề nghiệp không được để trống' })
-  ngheNghiep: NgheNghiep;
+  ngheNghiep: string;
 
   @IsOptional()
   @Type(() => Number)
