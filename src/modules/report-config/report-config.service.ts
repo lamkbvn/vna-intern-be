@@ -91,11 +91,31 @@ export class ReportConfigService {
 
     const savedConfig = await configRepository.save(config);
 
+    // Tạo report tương ứng với từng doanh nghiệp
+    const reports = businesses.map((business) =>
+      reportRepository.create({
+        business,
+        reportConfig: savedConfig,
+
+        // Thông tin mặc định của report
+        year: savedConfig.year,
+        period: savedConfig.period,
+        status: ReportStatus.REPORTING,
+        totalEmployees: 0,
+        totalFemaleEmployees: 0,
+        totalQuyLuong: 0,
+      }),
+    );
+
+    // Lưu tất cả report
+    const savedReports = await reportRepository.save(reports);
+
     return {
-      message: 'Tạo cấu hình báo cáo thành công.',
+      message: 'Tạo cấu hình báo cáo và khởi tạo báo cáo thành công.',
       data: {
         config: savedConfig,
         totalBusinesses: businesses.length,
+        totalReports: savedReports.length,
       },
     };
   });
