@@ -51,12 +51,19 @@ export class UploadController {
       throw new BadRequestException('Không tìm thấy file tải lên');
     }
 
+    let originalName = file.originalname;
+    try {
+      originalName = Buffer.from(file.originalname, 'latin1').toString('utf8');
+    } catch {
+      originalName = file.originalname;
+    }
+
     const filePath = `/uploads/documents/${file.filename}`;
     return Response.get({
       filePath,
       filename: file.filename,
-      fileName: file.originalname,
-      originalName: file.originalname,
+      fileName: originalName,
+      originalName,
       size: file.size,
     });
   }
