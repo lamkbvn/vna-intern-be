@@ -10,3 +10,59 @@ vào https://myaccount.google.com/apppasswords
 Đặt tên ứng dụng (ví dụ: VNA-Backend) rồi bấm Tạo.
 Google sẽ cấp chuỗi mật khẩu (dạng xxxx xxxx xxxx xxxx).
 
+
+/////////huong dan migration de them lai status (XUẤT HẾT DỮ LIỆU Ở CÁC BẢNG CŨ RA TRƯỚC ĐỂ TRÁNH MẤT NHỚ SỬA LẠI period SAU KHI CHẠY LẠI)
+
+///// xoa bang report , report config , report detail accident , report-accident trong database
+
+chay lai migration
+
+ chay sql trong portgresql
+///////////////
+ROLLBACK;
+
+BEGIN;
+
+-- Tạo enum mới
+CREATE TYPE report_period_enum_new AS ENUM (
+    '6 months start year',
+    '6 months end year',
+    '12 months'
+);
+
+-- Chuyển enum cho bảng report
+ALTER TABLE report
+ALTER COLUMN period TYPE report_period_enum_new
+USING period::text::report_period_enum_new;
+
+-- Chuyển enum cho bảng report_config
+ALTER TABLE report_config
+ALTER COLUMN period TYPE report_period_enum_new
+USING period::text::report_period_enum_new;
+
+-- Xóa enum cũ
+DROP TYPE report_period_enum;
+
+-- Đổi tên enum mới
+ALTER TYPE report_period_enum_new
+RENAME TO report_period_enum;
+
+COMMIT;
+/////////////
+
+kiem tra xem enum reportperiod da dung chua 
+SELECT enumlabel
+FROM pg_enum
+JOIN pg_type ON pg_enum.enumtypid = pg_type.oid
+WHERE pg_type.typname = 'report_period_enum'
+ORDER BY enumsortorder;
+ket qua cac dong duoi
+ enum ReportPeriod {
+    '6 months start year',
+   '6 months end year',
+    '12 months',
+}
+
+
+
+

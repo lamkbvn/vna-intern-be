@@ -321,7 +321,10 @@ export class ReportService {
                 'COALESCE(SUM(accident.totalThietHai), 0)',
                 'totalThietHai',
             )
-            .where('report.year = :year', { year });
+            .where('report.year = :year', { year })
+            .andWhere('report.status = :status', {
+                status: ReportStatus.RECEIVED,
+            });
 
         if (period) {
             query.andWhere('report.period = :period', { period });
@@ -393,7 +396,10 @@ export class ReportService {
                 'COALESCE(SUM(detail.totalThietHai), 0)',
                 'totalThietHai',
             )
-            .where('report.year = :year', { year });
+            .where('report.year = :year', { year })
+            .andWhere('report.status = :status', {
+                status: ReportStatus.RECEIVED,
+            });
 
         if (period) {
             query.andWhere('report.period = :period', { period });
@@ -451,7 +457,10 @@ export class ReportService {
                 'COALESCE(SUM(detail.totalThietHai), 0)',
                 'totalThietHai',
             )
-            .where('report.year = :year', { year });
+            .where('report.year = :year', { year })
+            .andWhere('report.status = :status', {
+                status: ReportStatus.RECEIVED,
+            });
 
         if (period) {
             query.andWhere('report.period = :period', { period });
@@ -509,7 +518,10 @@ export class ReportService {
                 'COALESCE(SUM(detail.totalThietHai), 0)',
                 'totalThietHai',
             )
-            .where('report.year = :year', { year });
+            .where('report.year = :year', { year })
+            .andWhere('report.status = :status', {
+                status: ReportStatus.RECEIVED,
+            });
 
         if (period) {
             query.andWhere('report.period = :period', { period });

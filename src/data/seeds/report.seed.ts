@@ -42,7 +42,7 @@ export async function seedReports(dataSource: DataSource): Promise<void> {
       },
       {
         year: 2026,
-        period: ReportPeriod.SIXMONTHS,
+        period: ReportPeriod.SIXMONTHS_START_YEAR,
         name: 'Báo cáo tình hình lao động 6 tháng đầu năm 2026',
         dateStart: new Date('2026-01-01'),
         dateEnd: new Date('2026-06-30'),
@@ -88,7 +88,7 @@ export async function seedReports(dataSource: DataSource): Promise<void> {
         totalQuyLuong: 18_500_000_000,
       },
       {
-        period: ReportPeriod.SIXMONTHS,
+        period: ReportPeriod.SIXMONTHS_START_YEAR,
         year: 2026,
         status: ReportStatus.REPORTING,
         totalEmployees: 180,

@@ -11,6 +11,7 @@ import { DataSource, Repository } from 'typeorm';
 import { Business } from '../business/entities/business.entity.js';
 import {
   Report,
+  ReportPeriod,
   ReportStatus,
 } from '../report/entity/report.entity.js';
 
@@ -34,92 +35,93 @@ export class ReportConfigService {
 
     @InjectRepository(Report)
     private readonly reportRepository: Repository<Report>,
-  ) {}
+  ) { }
 
   async create(dto: CreateReportConfigDto) {
-  // Kiểm tra ngày bắt đầu và kết thúc
-  if (dto.dateStart > dto.dateEnd) {
-    throw new BadRequestException(
-      'Ngày bắt đầu không được lớn hơn ngày kết thúc.',
+    // Kiểm tra ngày bắt đầu và kết thúc
+    this.validateReportPeriod(
+      dto.dateStart,
+      dto.dateEnd,
+      dto.period,
+      dto.year,
     );
-  }
 
-  return this.dataSource.transaction(async (manager) => {
-    const configRepository = manager.getRepository(ReportConfig);
-    const businessRepository = manager.getRepository(Business);
-    const reportRepository = manager.getRepository(Report);
+    return this.dataSource.transaction(async (manager) => {
+      const configRepository = manager.getRepository(ReportConfig);
+      const businessRepository = manager.getRepository(Business);
+      const reportRepository = manager.getRepository(Report);
 
-    // Kiểm tra cấu hình đã tồn tại
-    const existingConfig = await configRepository.findOne({
-      where: {
+      // Kiểm tra cấu hình đã tồn tại
+      const existingConfig = await configRepository.findOne({
+        where: {
+          year: dto.year,
+          period: dto.period,
+        },
+      });
+
+      if (existingConfig) {
+        throw new ConflictException(
+          `Cấu hình báo cáo năm ${dto.year}, kỳ ${dto.period} đã tồn tại.`,
+        );
+      }
+
+      // Lấy tất cả doanh nghiệp đang hoạt động
+      const businesses = await businessRepository.find({
+        where: {
+          isActive: true,
+        },
+        order: {
+          createdAt: 'ASC',
+        },
+      });
+
+      if (businesses.length === 0) {
+        throw new BadRequestException(
+          'Không tìm thấy doanh nghiệp đang hoạt động.',
+        );
+      }
+
+      // Tạo cấu hình báo cáo
+      const config = configRepository.create({
         year: dto.year,
         period: dto.period,
-      },
-    });
+        name: dto.name,
+        dateStart: dto.dateStart,
+        dateEnd: dto.dateEnd,
+        status: dto.status ?? true,
+      });
 
-    if (existingConfig) {
-      throw new ConflictException(
-        `Cấu hình báo cáo năm ${dto.year}, kỳ ${dto.period} đã tồn tại.`,
+      const savedConfig = await configRepository.save(config);
+
+      // Tạo report tương ứng với từng doanh nghiệp
+      const reports = businesses.map((business) =>
+        reportRepository.create({
+          business,
+          reportConfig: savedConfig,
+
+          // Thông tin mặc định của report
+          year: savedConfig.year,
+          period: savedConfig.period,
+          status: ReportStatus.REPORTING,
+          totalEmployees: 0,
+          totalFemaleEmployees: 0,
+          totalQuyLuong: 0,
+        }),
       );
-    }
 
-    // Lấy tất cả doanh nghiệp đang hoạt động
-    const businesses = await businessRepository.find({
-      where: {
-        isActive: true,
-      },
-      order: {
-        createdAt: 'ASC',
-      },
+      // Lưu tất cả report
+      const savedReports = await reportRepository.save(reports);
+
+      return {
+        message: 'Tạo cấu hình báo cáo và khởi tạo báo cáo thành công.',
+        data: {
+          config: savedConfig,
+          totalBusinesses: businesses.length,
+          totalReports: savedReports.length,
+        },
+      };
     });
-
-    if (businesses.length === 0) {
-      throw new BadRequestException(
-        'Không tìm thấy doanh nghiệp đang hoạt động.',
-      );
-    }
-
-    // Tạo cấu hình báo cáo
-    const config = configRepository.create({
-      year: dto.year,
-      period: dto.period,
-      name: dto.name,
-      dateStart: dto.dateStart,
-      dateEnd: dto.dateEnd,
-      status: dto.status ?? true,
-    });
-
-    const savedConfig = await configRepository.save(config);
-
-    // Tạo report tương ứng với từng doanh nghiệp
-    const reports = businesses.map((business) =>
-      reportRepository.create({
-        business,
-        reportConfig: savedConfig,
-
-        // Thông tin mặc định của report
-        year: savedConfig.year,
-        period: savedConfig.period,
-        status: ReportStatus.REPORTING,
-        totalEmployees: 0,
-        totalFemaleEmployees: 0,
-        totalQuyLuong: 0,
-      }),
-    );
-
-    // Lưu tất cả report
-    const savedReports = await reportRepository.save(reports);
-
-    return {
-      message: 'Tạo cấu hình báo cáo và khởi tạo báo cáo thành công.',
-      data: {
-        config: savedConfig,
-        totalBusinesses: businesses.length,
-        totalReports: savedReports.length,
-      },
-    };
-  });
-}
+  }
 
   async findAll(dto: QueryReportConfigDto) {
     const pageNumber = Number(dto.pageNumber) || 1;
@@ -175,40 +177,112 @@ export class ReportConfigService {
     return config;
   }
 
-  async update(id: string, dto: UpdateReportConfigDto): Promise<ReportConfig> {
+  async update(
+    id: string,
+    dto: UpdateReportConfigDto,
+  ): Promise<ReportConfig> {
     const config = await this.findOne(id);
 
-    const nextDateStart = dto.dateStart ? new Date(dto.dateStart) : config.dateStart;
-    const nextDateEnd = dto.dateEnd ? new Date(dto.dateEnd) : config.dateEnd;
+    const nextDateStart =
+      dto.dateStart !== undefined
+        ? new Date(dto.dateStart)
+        : config.dateStart;
 
-    if (nextDateStart > nextDateEnd) {
-      throw new BadRequestException('Ngày bắt đầu không được lớn hơn ngày kết thúc.');
-    }
+    const nextDateEnd =
+      dto.dateEnd !== undefined
+        ? new Date(dto.dateEnd)
+        : config.dateEnd;
+
+    const nextPeriod = dto.period ?? config.period;
+    const nextYear = dto.year ?? config.year;
+
+    this.validateReportPeriod(
+      nextDateStart,
+      nextDateEnd,
+      nextPeriod,
+      nextYear,
+    );
 
     if (dto.year !== undefined) config.year = dto.year;
     if (dto.period !== undefined) config.period = dto.period;
     if (dto.name !== undefined) config.name = dto.name;
-    if (dto.dateStart !== undefined) config.dateStart = new Date(dto.dateStart);
-    if (dto.dateEnd !== undefined) config.dateEnd = new Date(dto.dateEnd);
+    if (dto.dateStart !== undefined) config.dateStart = nextDateStart;
+    if (dto.dateEnd !== undefined) config.dateEnd = nextDateEnd;
     if (dto.status !== undefined) config.status = dto.status;
 
     return await this.reportConfigRepository.save(config);
   }
 
   async updateReportConfigStatus(
-  id: string,
-  status: boolean,
-): Promise<ReportConfig> {
-  const reportConfig = await this.reportConfigRepository.findOne({
-    where: { id },
-  });
+    id: string,
+    status: boolean,
+  ): Promise<ReportConfig> {
+    const reportConfig = await this.reportConfigRepository.findOne({
+      where: { id },
+    });
 
-  if (!reportConfig) {
-    throw Response.NOT_FOUND('reportConfig');
+    if (!reportConfig) {
+      throw Response.NOT_FOUND('reportConfig');
+    }
+
+    reportConfig.status = status;
+
+    return await this.reportConfigRepository.save(reportConfig);
   }
 
-  reportConfig.status = status;
+  private validateReportPeriod(
+    dateStart: Date | string,
+    dateEnd: Date | string,
+    period: ReportPeriod,
+    year: number,
+  ): void {
+    const start = new Date(dateStart);
+    const end = new Date(dateEnd);
 
-  return await this.reportConfigRepository.save(reportConfig);
-}
+    if (
+      Number.isNaN(start.getTime()) ||
+      Number.isNaN(end.getTime())
+    ) {
+      throw new BadRequestException(
+        'Ngày bắt đầu hoặc ngày kết thúc không hợp lệ.',
+      );
+    }
+
+    let expectedStart: Date;
+    let expectedEnd: Date;
+
+    switch (period) {
+      case ReportPeriod.SIXMONTHS_START_YEAR:
+        expectedStart = new Date(year, 0, 1);
+        expectedEnd = new Date(year, 5, 30);
+        break;
+
+      case ReportPeriod.SIXMONTHS_END_YEAR:
+        expectedStart = new Date(year, 6, 1);
+        expectedEnd = new Date(year, 11, 31);
+        break;
+
+      case ReportPeriod.TWELVEMONTHS:
+        expectedStart = new Date(year, 0, 1);
+        expectedEnd = new Date(year, 11, 31);
+        break;
+
+      default:
+        throw new BadRequestException('Kỳ báo cáo không hợp lệ.');
+    }
+
+    const isSameDate = (a: Date, b: Date) =>
+      a.getFullYear() === b.getFullYear() &&
+      a.getMonth() === b.getMonth() &&
+      a.getDate() === b.getDate();
+
+    if (
+      !isSameDate(start, expectedStart) ||
+      !isSameDate(end, expectedEnd)
+    ) {
+      throw new BadRequestException(
+        `Thời gian báo cáo không hợp lệ. Vui lòng kiểm tra ngày bắt đầu và ngày kết thúc theo kỳ báo cáo năm ${year}.`,
+      );
+    }
+  }
 }
