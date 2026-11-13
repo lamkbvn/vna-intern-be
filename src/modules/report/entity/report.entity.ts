@@ -7,13 +7,12 @@ import type { Relation } from 'typeorm';
 import { ReportConfig } from '../../report-config/report-config.entity.js';
 
 export enum ReportStatus {
-    NOT_REPORTING = 'not_reporting',// chua bao cao
-    REPORTING = 'reporting',//dang bao cao
-    RECEIVED = 'received',// da duyet
-    APPROVED = 'approved',// cho duyet
-    REJECTED = 'rejected',// tu choi
-    EXPIRED = 'expired',// het han
-    // chua bao cao , dang bao cao ,  cho duyet , da duyet , tu choi , het han
+    NOT_REPORTING = 'not_reporting', // chua bao cao
+    REPORTING = 'reporting', // dang bao cao
+    RECEIVED = 'received', // da tiep nhan / cho duyet
+    APPROVED = 'approved', // da duyet
+    REJECTED = 'rejected', // tu choi
+    EXPIRED = 'expired', // het han
 }
 
 export enum ReportPeriod {

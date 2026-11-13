@@ -127,12 +127,19 @@ export class ReportService {
                 'ldnu',
             )
             .where('report.year = :year', { year })
-            .andWhere('business.isActive = :active', { active: true });
+            .andWhere('business.isActive = :active', { active: true })
+            .andWhere('report.status = :status', { status: ReportStatus.APPROVED });
 
         if (period) {
-            reportQuery.andWhere('report.period = :period', {
-                period,
-            });
+            if (period === ('6 months' as any)) {
+                reportQuery.andWhere('report.period::text LIKE :periodPrefix', {
+                    periodPrefix: '6 months%',
+                });
+            } else {
+                reportQuery.andWhere('report.period = :period', {
+                    period,
+                });
+            }
         }
 
         const reportStats = await reportQuery
@@ -158,12 +165,19 @@ export class ReportService {
                 'tsnguoibithuongnang',
             )
             .where('report.year = :year', { year })
-            .andWhere('business.isActive = :active', { active: true });
+            .andWhere('business.isActive = :active', { active: true })
+            .andWhere('report.status = :status', { status: ReportStatus.APPROVED });
 
         if (period) {
-            accidentQuery.andWhere('report.period = :period', {
-                period,
-            });
+            if (period === ('6 months' as any)) {
+                accidentQuery.andWhere('report.period::text LIKE :periodPrefix', {
+                    periodPrefix: '6 months%',
+                });
+            } else {
+                accidentQuery.andWhere('report.period = :period', {
+                    period,
+                });
+            }
         }
 
         const accidentStats = await accidentQuery
@@ -323,11 +337,17 @@ export class ReportService {
             )
             .where('report.year = :year', { year })
             .andWhere('report.status = :status', {
-                status: ReportStatus.RECEIVED,
+                status: ReportStatus.APPROVED,
             });
 
         if (period) {
-            query.andWhere('report.period = :period', { period });
+            if (period === ('6 months' as any)) {
+                query.andWhere('report.period::text LIKE :periodPrefix', {
+                    periodPrefix: '6 months%',
+                });
+            } else {
+                query.andWhere('report.period = :period', { period });
+            }
         }
 
         return query.getRawOne();
@@ -398,11 +418,17 @@ export class ReportService {
             )
             .where('report.year = :year', { year })
             .andWhere('report.status = :status', {
-                status: ReportStatus.RECEIVED,
+                status: ReportStatus.APPROVED,
             });
 
         if (period) {
-            query.andWhere('report.period = :period', { period });
+            if (period === ('6 months' as any)) {
+                query.andWhere('report.period::text LIKE :periodPrefix', {
+                    periodPrefix: '6 months%',
+                });
+            } else {
+                query.andWhere('report.period = :period', { period });
+            }
         }
 
         return query
@@ -459,11 +485,17 @@ export class ReportService {
             )
             .where('report.year = :year', { year })
             .andWhere('report.status = :status', {
-                status: ReportStatus.RECEIVED,
+                status: ReportStatus.APPROVED,
             });
 
         if (period) {
-            query.andWhere('report.period = :period', { period });
+            if (period === ('6 months' as any)) {
+                query.andWhere('report.period::text LIKE :periodPrefix', {
+                    periodPrefix: '6 months%',
+                });
+            } else {
+                query.andWhere('report.period = :period', { period });
+            }
         }
 
         return query
@@ -520,11 +552,17 @@ export class ReportService {
             )
             .where('report.year = :year', { year })
             .andWhere('report.status = :status', {
-                status: ReportStatus.RECEIVED,
+                status: ReportStatus.APPROVED,
             });
 
         if (period) {
-            query.andWhere('report.period = :period', { period });
+            if (period === ('6 months' as any)) {
+                query.andWhere('report.period::text LIKE :periodPrefix', {
+                    periodPrefix: '6 months%',
+                });
+            } else {
+                query.andWhere('report.period = :period', { period });
+            }
         }
 
         return query
