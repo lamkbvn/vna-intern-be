@@ -124,7 +124,7 @@ export class ReportService {
         };
     }
 
-    async getOverview(year: number, period?: ReportPeriod) {
+    async getOverview(year?: number, period?: ReportPeriod) {
         // 1. Lấy danh sách BusinessType đang hoạt động
         const businessTypes = await this.businessTypeRepository.find({
             where: { isActive: true },
@@ -157,9 +157,12 @@ export class ReportService {
                 'SUM(report.totalFemaleEmployees)',
                 'ldnu',
             )
-            .where('report.year = :year', { year })
-            .andWhere('business.isActive = :active', { active: true })
+            .where('business.isActive = :active', { active: true })
             .andWhere('report.status = :status', { status: ReportStatus.APPROVED });
+
+        if (year) {
+            reportQuery.andWhere('report.year = :year', { year });
+        }
 
         if (period) {
             if (period === ('6 months' as any)) {
@@ -195,9 +198,12 @@ export class ReportService {
                 'SUM(accident.totalHumanInjuredHeavy)',
                 'tsnguoibithuongnang',
             )
-            .where('report.year = :year', { year })
-            .andWhere('business.isActive = :active', { active: true })
+            .where('business.isActive = :active', { active: true })
             .andWhere('report.status = :status', { status: ReportStatus.APPROVED });
+
+        if (year) {
+            accidentQuery.andWhere('report.year = :year', { year });
+        }
 
         if (period) {
             if (period === ('6 months' as any)) {
@@ -304,14 +310,14 @@ export class ReportService {
         });
 
         return {
-            year,
+            year: year ?? null,
             period: period ?? 'all',
             data,
         };
     }
 
     private async getTotalAccidentStatistics(
-        year: number,
+        year?: number,
         period?: ReportPeriod,
     ) {
         const query = this.reportAccidentRepository
@@ -366,10 +372,13 @@ export class ReportService {
                 'COALESCE(SUM(accident.totalThietHai), 0)',
                 'totalThietHai',
             )
-            .where('report.year = :year', { year })
-            .andWhere('report.status = :status', {
+            .where('report.status = :status', {
                 status: ReportStatus.APPROVED,
             });
+
+        if (year) {
+            query.andWhere('report.year = :year', { year });
+        }
 
         if (period) {
             if (period === ('6 months' as any)) {
@@ -384,7 +393,7 @@ export class ReportService {
         return query.getRawOne();
     }
     private async getStatisticsByIndustry(
-        year: number,
+        year?: number,
         period?: ReportPeriod,
     ) {
         const query = this.reportDetailAccidentRepository
@@ -447,10 +456,13 @@ export class ReportService {
                 'COALESCE(SUM(detail.totalThietHai), 0)',
                 'totalThietHai',
             )
-            .where('report.year = :year', { year })
-            .andWhere('report.status = :status', {
+            .where('report.status = :status', {
                 status: ReportStatus.APPROVED,
             });
+
+        if (year) {
+            query.andWhere('report.year = :year', { year });
+        }
 
         if (period) {
             if (period === ('6 months' as any)) {
@@ -467,7 +479,7 @@ export class ReportService {
             .getRawMany();
     }
     private async getStatisticsByCause(
-        year: number,
+        year?: number,
         period?: ReportPeriod,
     ) {
         const query = this.reportDetailAccidentRepository
@@ -514,10 +526,13 @@ export class ReportService {
                 'COALESCE(SUM(detail.totalThietHai), 0)',
                 'totalThietHai',
             )
-            .where('report.year = :year', { year })
-            .andWhere('report.status = :status', {
+            .where('report.status = :status', {
                 status: ReportStatus.APPROVED,
             });
+
+        if (year) {
+            query.andWhere('report.year = :year', { year });
+        }
 
         if (period) {
             if (period === ('6 months' as any)) {
@@ -534,7 +549,7 @@ export class ReportService {
             .getRawMany();
     }
     private async getStatisticsByInjuryFactor(
-        year: number,
+        year?: number,
         period?: ReportPeriod,
     ) {
         const query = this.reportDetailAccidentRepository
@@ -581,10 +596,13 @@ export class ReportService {
                 'COALESCE(SUM(detail.totalThietHai), 0)',
                 'totalThietHai',
             )
-            .where('report.year = :year', { year })
-            .andWhere('report.status = :status', {
+            .where('report.status = :status', {
                 status: ReportStatus.APPROVED,
             });
+
+        if (year) {
+            query.andWhere('report.year = :year', { year });
+        }
 
         if (period) {
             if (period === ('6 months' as any)) {
@@ -601,7 +619,7 @@ export class ReportService {
             .getRawMany();
     }
     async getAccidentStatistics(
-        year: number,
+        year?: number,
         period?: ReportPeriod,
     ) {
         const [
@@ -617,7 +635,7 @@ export class ReportService {
         ]);
 
         return {
-            year,
+            year: year ?? null,
             period: period ?? 'all',
             data: [
                 {

@@ -48,7 +48,7 @@ export class ReportController {
    */
   @Get('overview')
   async getOverview(
-    @Query('year', ParseIntPipe) year: number,
+    @Query('year', new ParseIntPipe({ optional: true })) year?: number,
     @Query('period', new ParseEnumPipe(ReportPeriod, { optional: true }))
     period?: ReportPeriod,
   ) {
@@ -56,13 +56,13 @@ export class ReportController {
   }
 
   /**
+   * GET /reports/accident-statistics
    * GET /reports/accident-statistics?year=2026
    * GET /reports/accident-statistics?year=2026&period=6%20months
    */
   @Get('accident-statistics')
   async getAccidentStatistics(
-    @Query('year', new DefaultValuePipe(new Date().getFullYear()), ParseIntPipe)
-    year: number,
+    @Query('year', new ParseIntPipe({ optional: true })) year?: number,
     @Query('period', new ParseEnumPipe(ReportPeriod, { optional: true }))
     period?: ReportPeriod,
   ) {
