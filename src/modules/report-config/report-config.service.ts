@@ -102,7 +102,7 @@ export class ReportConfigService {
           // Thông tin mặc định của report
           year: savedConfig.year,
           period: savedConfig.period,
-          status: ReportStatus.REPORTING,
+          status: ReportStatus.NOT_REPORTING,
           totalEmployees: 0,
           totalFemaleEmployees: 0,
           totalQuyLuong: 0,
@@ -134,7 +134,13 @@ export class ReportConfigService {
     }
 
     if (dto.period) {
-      qb.andWhere('config.period = :period', { period: dto.period });
+      if (dto.period === ('6 months' as any)) {
+        qb.andWhere('config.period::text LIKE :periodPrefix', {
+          periodPrefix: '6 months%',
+        });
+      } else {
+        qb.andWhere('config.period = :period', { period: dto.period });
+      }
     }
 
     if (typeof dto.status === 'boolean') {

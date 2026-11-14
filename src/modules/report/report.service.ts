@@ -54,14 +54,32 @@ export class ReportService {
         const year = Number(dto.year) || new Date().getFullYear();
         const pageNumber = Number(dto.pageNumber) || 1;
         const pageSize = Number(dto.pageSize) || 10;
+        const now = new Date();
 
         const qb = this.reportRepository
             .createQueryBuilder('report')
             .leftJoinAndSelect('report.business', 'business')
+            .leftJoinAndSelect('report.reportConfig', 'reportConfig')
             .where('report.year = :year', { year });
 
         if (dto.status) {
-            qb.andWhere('report.status = :status', { status: dto.status });
+            if (dto.status === ReportStatus.EXPIRED) {
+                qb.andWhere(
+                    '(report.status = :status OR (report.status IN (:...pendingStatuses) AND reportConfig.dateEnd IS NOT NULL AND reportConfig.dateEnd < :currentDate))',
+                    {
+                        status: ReportStatus.EXPIRED,
+                        pendingStatuses: [ReportStatus.NOT_REPORTING, ReportStatus.REPORTING],
+                        currentDate: now,
+                    },
+                );
+            } else if (dto.status === ReportStatus.REPORTING || dto.status === ReportStatus.NOT_REPORTING) {
+                qb.andWhere('report.status = :status', { status: dto.status });
+                qb.andWhere('(reportConfig.dateEnd IS NULL OR reportConfig.dateEnd >= :currentDate)', {
+                    currentDate: now,
+                });
+            } else {
+                qb.andWhere('report.status = :status', { status: dto.status });
+            }
         }
 
         if (dto.period) {
@@ -82,8 +100,21 @@ export class ReportService {
 
         const [data, total] = await qb.getManyAndCount();
 
+        const mappedData = data.map((rep) => {
+            const isExpired = rep.reportConfig?.dateEnd
+                ? new Date(rep.reportConfig.dateEnd).setHours(23, 59, 59, 999) < now.getTime()
+                : false;
+            if (
+                (rep.status === ReportStatus.NOT_REPORTING || rep.status === ReportStatus.REPORTING) &&
+                isExpired
+            ) {
+                return { ...rep, status: ReportStatus.EXPIRED };
+            }
+            return rep;
+        });
+
         return {
-            data,
+            data: mappedData,
             pagination: {
                 pageNumber,
                 pageSize,
@@ -653,7 +684,7 @@ export class ReportService {
     ): Promise<Report> {
         const report = await this.reportRepository.findOne({
             where: { id: reportId },
-            relations: ['business'],
+            relations: ['business', 'reportConfig'],
         });
 
         if (!report) {
@@ -665,6 +696,12 @@ export class ReportService {
         if (report.status === ReportStatus.RECEIVED) {
             throw new BadRequestException(
                 'Báo cáo đã được nộp và tiếp nhận, không thể chỉnh sửa',
+            );
+        }
+
+        if (report.status === ReportStatus.APPROVED) {
+            throw new BadRequestException(
+                'Báo cáo đã được duyệt, không thể chỉnh sửa',
             );
         }
 
@@ -753,6 +790,19 @@ export class ReportService {
                 );
             }
 
+            if (report.status === ReportStatus.APPROVED) {
+                throw new BadRequestException(
+                    'Báo cáo đã được duyệt, không thể chỉnh sửa',
+                );
+            }
+
+            if (
+                report.status === ReportStatus.REJECTED ||
+                report.status === ReportStatus.NOT_REPORTING
+            ) {
+                report.status = ReportStatus.REPORTING;
+            }
+
             report.year = dto.year;
             report.period = dto.period;
             report.totalEmployees = dto.totalEmployees;
@@ -766,7 +816,7 @@ export class ReportService {
                     year: dto.year,
                     period: dto.period,
                 },
-                relations: ['business'],
+                relations: ['business', 'reportConfig'],
             });
 
             if (existing) {
@@ -775,7 +825,18 @@ export class ReportService {
                         `Báo cáo kỳ "${dto.period}" năm ${dto.year} đã nộp và tiếp nhận. Không thể tạo lại.`,
                     );
                 }
+                if (existing.status === ReportStatus.APPROVED) {
+                    throw new BadRequestException(
+                        `Báo cáo kỳ "${dto.period}" năm ${dto.year} đã được duyệt. Không thể tạo lại.`,
+                    );
+                }
                 report = existing;
+                if (
+                    report.status === ReportStatus.REJECTED ||
+                    report.status === ReportStatus.NOT_REPORTING
+                ) {
+                    report.status = ReportStatus.REPORTING;
+                }
                 report.totalEmployees = dto.totalEmployees;
                 report.totalFemaleEmployees = dto.totalFemaleEmployees;
                 report.totalQuyLuong = dto.totalQuyLuong;
@@ -795,6 +856,14 @@ export class ReportService {
                     reportConfig = await this.reportConfigRepository.findOne({
                         where: { year: dto.year },
                     });
+                }
+
+                const now = new Date();
+                const isExpired = reportConfig?.dateEnd
+                    ? new Date(reportConfig.dateEnd).setHours(23, 59, 59, 999) < now.getTime()
+                    : false;
+                if (isExpired) {
+                    throw new BadRequestException('Kỳ báo cáo này đã hết hạn nộp');
                 }
 
                 report = this.reportRepository.create({
@@ -858,6 +927,11 @@ export class ReportService {
 
         const saved = await this.reportAccidentRepository.save(accident);
 
+        if (report.status === ReportStatus.REJECTED || report.status === ReportStatus.NOT_REPORTING) {
+            report.status = ReportStatus.REPORTING;
+            await this.reportRepository.save(report);
+        }
+
         return {
             message: 'Lưu thông tin tổng số vụ tai nạn lao động thành công',
             reportId: report.id,
@@ -888,6 +962,11 @@ export class ReportService {
         );
 
         const saved = await this.reportDetailAccidentRepository.save(newEntities);
+
+        if (report.status === ReportStatus.REJECTED || report.status === ReportStatus.NOT_REPORTING) {
+            report.status = ReportStatus.REPORTING;
+            await this.reportRepository.save(report);
+        }
 
         return {
             message: 'Lưu chi tiết các vụ tai nạn lao động thành công',
@@ -925,6 +1004,11 @@ export class ReportService {
         }
 
         const saved = await this.reportAccidentRepository.save(accident);
+
+        if (report.status === ReportStatus.REJECTED || report.status === ReportStatus.NOT_REPORTING) {
+            report.status = ReportStatus.REPORTING;
+            await this.reportRepository.save(report);
+        }
 
         return {
             message:
@@ -995,6 +1079,7 @@ export class ReportService {
                 year: report.year,
                 period: report.period,
                 status: report.status,
+                note: report.note || null,
                 totalEmployees: report.totalEmployees,
                 totalFemaleEmployees: report.totalFemaleEmployees,
                 totalQuyLuong: report.totalQuyLuong ? Math.round(Number(report.totalQuyLuong)) : 0,
@@ -1054,6 +1139,10 @@ export class ReportService {
         if (url) report.attachmentUrl = url;
         if (name) report.attachmentName = name;
 
+        if (report.status === ReportStatus.REJECTED || report.status === ReportStatus.NOT_REPORTING) {
+            report.status = ReportStatus.REPORTING;
+        }
+
         await this.reportRepository.save(report);
 
         return {
@@ -1074,6 +1163,20 @@ export class ReportService {
 
         if (report.status === ReportStatus.RECEIVED) {
             throw new BadRequestException('Báo cáo này đã được gửi trước đó');
+        }
+
+        if (report.status === ReportStatus.APPROVED) {
+            throw new BadRequestException('Báo cáo này đã được duyệt');
+        }
+
+        const now = new Date();
+        const isExpired = report.reportConfig?.dateEnd
+            ? new Date(report.reportConfig.dateEnd).setHours(23, 59, 59, 999) < now.getTime()
+            : false;
+        if (isExpired) {
+            report.status = ReportStatus.EXPIRED;
+            await this.reportRepository.save(report);
+            throw new BadRequestException('Kỳ báo cáo đã kết thúc (quá hạn), không thể nộp báo cáo');
         }
 
         if (!report.attachmentUrl) {
@@ -1101,6 +1204,7 @@ export class ReportService {
         const { year, period, status } = query;
         const pageNumber = query.pageNumber || 1;
         const pageSize = query.pageSize || 10;
+        const now = new Date();
 
         const business = await this.businessRepository.findOne({
             where: { id: businessId },
@@ -1135,6 +1239,10 @@ export class ReportService {
 
         // 3. Kết hợp cấu hình với báo cáo thực tế của DN
         let combinedItems: any[] = configs.map((cfg) => {
+            const isConfigExpired = cfg.dateEnd
+                ? new Date(cfg.dateEnd).setHours(23, 59, 59, 999) < now.getTime()
+                : false;
+
             const report = existingReports.find(
                 (r) =>
                     r.reportConfig?.id === cfg.id ||
@@ -1142,6 +1250,15 @@ export class ReportService {
             );
 
             if (report) {
+                let computedStatus = report.status;
+                if (
+                    (report.status === ReportStatus.NOT_REPORTING ||
+                        report.status === ReportStatus.REPORTING) &&
+                    isConfigExpired
+                ) {
+                    computedStatus = ReportStatus.EXPIRED;
+                }
+
                 return {
                     id: report.id,
                     configId: cfg.id,
@@ -1149,7 +1266,10 @@ export class ReportService {
                     business: report.business || business,
                     period: report.period,
                     year: report.year,
-                    status: report.status, // 'reporting' | 'received'
+                    status: computedStatus,
+                    note: report.note,
+                    dateEnd: cfg.dateEnd,
+                    isExpired: isConfigExpired,
                     createdAt: report.createdAt,
                     updatedAt: report.updatedAt,
                     attachmentUrl: report.attachmentUrl,
@@ -1157,7 +1277,7 @@ export class ReportService {
                 };
             }
 
-            // Chưa cập nhật báo cáo -> status là 'pending' (Chờ báo cáo)
+            // Chưa tạo báo cáo -> nếu hết hạn thì EXPIRED, ngược lại là NOT_REPORTING
             return {
                 id: null,
                 configId: cfg.id,
@@ -1165,7 +1285,10 @@ export class ReportService {
                 business: business,
                 period: cfg.period,
                 year: cfg.year,
-                status: 'pending', // 'Chờ báo cáo'
+                status: isConfigExpired ? ReportStatus.EXPIRED : ReportStatus.NOT_REPORTING,
+                note: null,
+                dateEnd: cfg.dateEnd,
+                isExpired: isConfigExpired,
                 createdAt: cfg.createdAt,
                 updatedAt: cfg.updatedAt,
                 attachmentUrl: null,
@@ -1177,6 +1300,17 @@ export class ReportService {
         for (const rep of existingReports) {
             const existsInCombined = combinedItems.some((ci) => ci.id === rep.id);
             if (!existsInCombined) {
+                const isConfigExpired = rep.reportConfig?.dateEnd
+                    ? new Date(rep.reportConfig.dateEnd).setHours(23, 59, 59, 999) < now.getTime()
+                    : false;
+                let computedStatus = rep.status;
+                if (
+                    (rep.status === ReportStatus.NOT_REPORTING || rep.status === ReportStatus.REPORTING) &&
+                    isConfigExpired
+                ) {
+                    computedStatus = ReportStatus.EXPIRED;
+                }
+
                 combinedItems.push({
                     id: rep.id,
                     configId: rep.reportConfig?.id || null,
@@ -1184,7 +1318,10 @@ export class ReportService {
                     business: rep.business || business,
                     period: rep.period,
                     year: rep.year,
-                    status: rep.status,
+                    status: computedStatus,
+                    note: rep.note,
+                    dateEnd: rep.reportConfig?.dateEnd || null,
+                    isExpired: isConfigExpired,
                     createdAt: rep.createdAt,
                     updatedAt: rep.updatedAt,
                     attachmentUrl: rep.attachmentUrl,

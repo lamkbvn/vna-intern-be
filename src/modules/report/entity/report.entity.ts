@@ -52,7 +52,7 @@ export class Report {
         type: 'enum',
         enum: ReportStatus,
         enumName: 'report_status_enum',
-        default: ReportStatus.REPORTING,
+        default: ReportStatus.NOT_REPORTING,
     })
     status: ReportStatus;
 
