@@ -182,9 +182,15 @@ export class UsersService {
     }
 
 
-    async findByUsernameWithPassword(username: string) {
+    async findByUsernameWithPassword(identifier: string) {
+        const clean = identifier?.trim();
+        if (!clean) return null;
+
         return this.userRepository.findOne({
-            where: { isDeleted: false, username },
+            where: [
+                { isDeleted: false, username: clean },
+                { isDeleted: false, email: clean.toLowerCase() },
+            ],
             select: {
                 id: true,
                 username: true,

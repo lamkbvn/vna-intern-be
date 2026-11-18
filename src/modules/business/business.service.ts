@@ -9,7 +9,7 @@ import { Repository } from 'typeorm';
 import { Business } from './entities/business.entity.js';
 import { BusinessType } from '../business-types/entities/business-type.entity.js';
 import { BusinessIndustry } from '../business-industries/entities/business-industry.entity.js';
-import { User, UserRole } from '../users/user.entity.js';
+import { User, UserRole, Gender } from '../users/user.entity.js';
 import * as bcrypt from 'bcrypt';
 import { CreateBusinessDto } from './dto/create-business.dto.js';
 import { UpdateBusinessDto } from './dto/update-business.dto.js';
@@ -329,29 +329,42 @@ export class BusinessService {
     try {
       const defaultPassword = '12345678';
       const passwordHash = await bcrypt.hash(defaultPassword, 12);
+      const cleanEmail = business.email.trim().toLowerCase();
+      const cleanFullName = (business.name?.trim() || taxCode).slice(0, 255);
 
+      // Tìm user theo username (taxCode) hoặc email
       const existingUser = await this.userRepository.findOne({
-        where: [{ username: taxCode }, { email: business.email }],
+        where: [{ username: taxCode }, { email: cleanEmail }],
       });
 
       if (!existingUser) {
         const user = this.userRepository.create({
           username: taxCode,
-          email: business.email,
+          email: cleanEmail,
           passwordHash,
-          fullName: business.name,
+          fullName: cleanFullName,
+          gender: Gender.MALE,
           role: UserRole.DOANH_NGHIEP,
           businessId: saved.id,
           isActive: business.isActive ?? true,
+          isDeleted: false,
           province: business.registeredProvince,
           district: business.registeredDistrict,
           streetAddress: business.address,
         });
         await this.userRepository.save(user);
       } else {
+        existingUser.username = taxCode;
+        existingUser.email = cleanEmail;
+        existingUser.fullName = cleanFullName;
         existingUser.businessId = saved.id;
         existingUser.role = UserRole.DOANH_NGHIEP;
         existingUser.passwordHash = passwordHash;
+        existingUser.isActive = business.isActive ?? true;
+        existingUser.isDeleted = false;
+        existingUser.province = business.registeredProvince;
+        existingUser.district = business.registeredDistrict;
+        existingUser.streetAddress = business.address;
         await this.userRepository.save(existingUser);
       }
     } catch (userErr) {
@@ -595,16 +608,20 @@ export class BusinessService {
       user.refreshTokenExpiresAt = null;
       user.resetPasswordOtpHash = null;
       user.resetPasswordOtpExpiresAt = null;
+      user.isActive = true;
+      user.isDeleted = false;
       await this.userRepository.save(user);
     } else {
       user = this.userRepository.create({
         username: business.taxCode,
-        email: business.email,
+        email: business.email.trim().toLowerCase(),
         passwordHash,
-        fullName: business.name,
+        fullName: (business.name?.trim() || business.taxCode).slice(0, 255),
+        gender: Gender.MALE,
         role: UserRole.DOANH_NGHIEP,
         businessId: business.id,
         isActive: business.isActive ?? true,
+        isDeleted: false,
         province: business.registeredProvince,
         district: business.registeredDistrict,
         streetAddress: business.address,

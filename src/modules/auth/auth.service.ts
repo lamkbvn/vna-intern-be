@@ -25,13 +25,14 @@ export class AuthService {
   ) {}
 
   async login(username: string, password: string) {
-    if (!username?.trim() || !password) {
+    const cleanUsername = username?.trim();
+    if (!cleanUsername || !password) {
       throw new BadRequestException('Vui lòng nhập đầy đủ thông tin');
     }
 
-    // 1. Tìm user theo username
+    // 1. Tìm user theo username hoặc email
     const user =
-      await this.usersService.findByUsernameWithPassword(username);
+      await this.usersService.findByUsernameWithPassword(cleanUsername);
 
     if (!user) {
       throw new UnauthorizedException('Tài khoản hoặc mật khẩu không đúng. Xin vui lòng thử lại');

@@ -40,7 +40,7 @@ export class User {
   @Column({ type: 'varchar', unique: true, length: 255 })
   email: string;
 
-  @Column({ name: 'full_name', type: 'varchar', length: 100, nullable: false })
+  @Column({ name: 'full_name', type: 'varchar', length: 255, nullable: false })
   fullName: string;
 
   @Column({ type: 'enum', enum: Gender, default: Gender.MALE })
